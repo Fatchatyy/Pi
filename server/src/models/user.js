@@ -21,7 +21,14 @@ const userSchema = new Schema({
     bookmarks: Array,
     resetToken: String,
     resetTokenExpires: Date,
-    applications: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    applications: [{
+        post: { type: Schema.Types.ObjectId, ref: 'Post' },
+        status: {
+            type: String,
+            enum: ['on hold', 'accepted', 'declined'],
+            default: 'on hold'
+        }
+    }]
 })
 
 export default model('User', userSchema)

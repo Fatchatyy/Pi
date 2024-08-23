@@ -136,6 +136,20 @@ export const createPost = (...args) => {
 export const uploadAvatar = (...args) => {
     return postMethod(urls.UPLOAD_AVATAR, ...args)
 }
+export const updateJobSeekerProfile = (params, responseCB, loadingCB) => {
+    const {userId} = params;
+    console.log('the paraaaaaaaamsss', params);
+    console.log('the userrrrrrrrrrID', userId);
+    const url = `${urls.UPDATE_JOB_SEEKER_PROFILE}/${userId}`
+    return postMethod(url, params, responseCB);
+};
+export const toggleBookmark = (params,token, responseCB, loadingCB) => {
+    const {userId,postId}=params;
+    console.log("the params of bookmark", userId, postId);
+    const url = `${urls.TOGGLE_BOOKMARK}/${userId}/${postId}`;
+    
+    return postMethod(url, {token}, responseCB, loadingCB);
+};
 
 export const updateUser = (...args) => {
     return postMethod(urls.UPDATE_USER, ...args)
@@ -161,6 +175,12 @@ export const getHome = (...args) => {
     console.log("the args of get home ");
     return getMethod(urls.GET_HOME, ...args)
 }
+export const getJobSeekerProfile = (userId, responseCB, loadingCB) => {
+    console.log('Fetching job seeker profile for userId:', userId);
+    const url = `${urls.GET_JOB_SEEKER_PROFILE}/${userId}`; // Construct the URL with the userId
+    
+    return getMethod(url, responseCB, loadingCB);
+};
 
 export const getUser = ({ id, username }, ...args) => {
     console.log('we are getting the user hihihii', id , username);
@@ -173,3 +193,8 @@ export const getUser = ({ id, username }, ...args) => {
 export const getPosts = (userID, ...args) => {
     return getMethod(urls.GET_POSTS + `?id=${userID}`, ...args)
 }
+export const getBookmarkedPosts = (userID, ...args) => {
+    console.log("is it userID ", userID);
+    const url = `${urls.GET_BOOKMARKED_POSTS}/${userID}`;
+    return getMethod(url, ...args);
+};

@@ -13,8 +13,12 @@ export const UNFOLLOW_USER = "/unfollow"
 export const REMOVE_AVATAR = "/remove-avatar"
 export const REMOVE_FOLLOWER = "/remove-follower"
 export const APPLY_FOR_JOB = '/jobs/apply';
+export const UPDATE_JOB_SEEKER_PROFILE= '/update-job-seeker-profile'
+export const TOGGLE_BOOKMARK ='/toggle-bookmark'
 
 /* GET */
 export const GET_HOME = "/home"
 export const GET_USER = "/user" // username or user id required
 export const GET_POSTS = "/get-posts" // user id required
+export const GET_JOB_SEEKER_PROFILE= '/job-seeker-profile'
+export const GET_BOOKMARKED_POSTS='/bookmarked-posts'

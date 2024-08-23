@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link,useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { IoIosMore } from 'react-icons/io'
 import { FaUserCheck } from 'react-icons/fa'
 import { BsGearWide } from 'react-icons/bs'
-import { getPosts, getUser,followUser, unfollowUser } from '../api/request'
+import { getPosts, getUser, followUser, getBookmarkedPosts, unfollowUser, getJobSeekerProfile } from '../api/request'
 import { updateFollowing } from '../store/user'
 import defaultAvatar from '../assets/img/default_avatar.jpg'
 import FollowManager from '../components/FollowManager'
@@ -19,8 +19,11 @@ function Profile() {
     const [loading, setLoading] = useState(false)
     const [post, selectPost] = useState(null)
     const [showAlertBox, setAlert] = useState(false)
+    const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
+    const [jobSeekerProfile, setJobSeekerProfile] = useState(null)
     const [showFollowersBox, setFollowersBox] = useState(false)
     const [showFollowingBox, setFollowingBox] = useState(false)
+    const [viewMode, setViewMode] = useState('info');
     const currentUser = useSelector(state => state.user)
     const path = useParams()
     const dispatch = useDispatch()
@@ -55,9 +58,16 @@ function Profile() {
             setFollowers(response.followers)
             setFollowing(response.following)
         })
+        console.log('the role', response.role);
         if (!response) return navigate("/")
         if (response.role === 'hr') {
             getPosts(response.id, setPosts, setLoading)
+        }
+        if (response.role === 'job_seeker') {
+            console.log("it is a job seeker", response.role);
+            getJobSeekerProfile(response.id, setJobSeekerProfile, setLoading)
+            getBookmarkedPosts(response.id, setBookmarkedPosts, setLoading);
+            
         }
     }
 
@@ -132,17 +142,27 @@ function Profile() {
             if (currentUser.role === 'hr') {
                 getPosts(currentUser.id, setPosts, setLoading)
             }
+            if (currentUser.role === 'job_seeker') {
+                getJobSeekerProfile(currentUser.id, setJobSeekerProfile, setLoading);
+            getBookmarkedPosts(currentUser.id, setBookmarkedPosts, setLoading);
+              
+
+            }
         } else {
             setSelf(false)
             userManager()
         }
     }, [path])
+    const toggleView = (mode) => {
+        setViewMode(mode);
+        console.log("toggled", viewMode);
+    }
 
     if (user) return (
         <div className='bg-[#FAFAFA] h-screen ' >
-            <LandingPost 
-                post={post} 
-                user={user} 
+            <LandingPost
+                post={post}
+                user={user}
                 selectPost={selectPost}
             />
             <UnfollowAlertBox />
@@ -175,11 +195,11 @@ function Profile() {
                                     <span>Posts</span>
                                 </div>
                                 <button onClick={() => setFollowersBox(true)} className='flex items-center justify-center' >
-                                    <span className='font-semibold mr-1 ' > { selfMode ? currentUser.followers.length : followers.length } </span>
+                                    <span className='font-semibold mr-1 ' > {selfMode ? currentUser.followers.length : followers.length} </span>
                                     <span>followers</span>
                                 </button>
                                 <div onClick={() => setFollowingBox(true)} className='flex items-center justify-center cursor-pointer' >
-                                    <span className='font-semibold mr-1 ' > { selfMode ? currentUser.following.length : following.length} </span>
+                                    <span className='font-semibold mr-1 ' > {selfMode ? currentUser.following.length : following.length} </span>
                                     <span>following</span>
                                 </div>
                             </div>
@@ -197,6 +217,13 @@ function Profile() {
                     )}
                     {user.role === 'job_Seeker' && (
                         <section className='w-full border-t border-[#DBDBDB] mt-14 flex items-center justify-center gap-20 ' >
+                            <span className=' text-sm font-semibold border-t border-black py-4 cursor-pointer ' >Posts</span>
+                            <span className=' text-sm text-[#928E9F] py-4 cursor-pointer ' ><button onClick={() => toggleView('info')}>Profile information</button></span>
+                            <span className=' text-sm text-[#928E9F] py-4 cursor-pointer ' ><button onClick={() => toggleView('info')}>Favourites</button></span>
+                        </section>
+                    )}
+                    {user.role === 'job_Seeker' && (
+                        <section className='w-full border-t border-[#DBDBDB] mt-14 flex items-center justify-center gap-20 ' >
                             <span className=' text-sm font-semibold border-t border-black py-4 cursor-pointer ' >Personal Information</span>
                         </section>
                     )}
@@ -207,40 +234,97 @@ function Profile() {
                     ) : (
                         user.role === 'hr' && (
                             <section className='w-full flex flex-wrap gap-7 items-center justify-center md:justify-start mb-5'>
-                            {posts.map((post, index) => (
-                                <div key={index} onClick={() => selectPost(post)} className='w-[293px] h-[293px] cursor-pointer relative'>
-                                    <img src={post.image} className="object-cover w-full h-full filter blur-sm" style={{ filter: 'blur(3px)' }} />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="bg-white bg-opacity-70 p-6 rounded-md text-center w-full h-full flex flex-col justify-between">
-                                            {/* Overlay Text */}
-                                            <div className="mb-4">
-                                                <h1 className="text-lg font-bold mb-2">WE ARE HIRING1</h1>
-                                                <h2 className="text-md">JOIN OUR TEAM</h2>
-                                            </div>
-                        
-                                            {/* Job Information */}
-                                            <div className="flex flex-col md:flex-row justify-between w-full h-full">
-                                                <div className="flex flex-col w-full md:w-1/2 pr-4 mb-4 md:mb-0">
-                                                    <span className="text-sm font-semibold mb-2">Description:</span>
-                                                    <p className="text-xs">{post.description}</p>
-                                                    <span className="text-sm font-semibold mb-2">Requirements:</span>
-                                                    <p className="text-xs">{post.requirements}</p>
+                                {posts.map((post, index) => (
+                                    <div key={index} onClick={() => selectPost(post)} className='w-[293px] h-[293px] cursor-pointer relative'>
+                                        <img src={post.image} className="object-cover w-full h-full filter blur-sm" style={{ filter: 'blur(3px)' }} />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="bg-white bg-opacity-70 p-6 rounded-md text-center w-full h-full flex flex-col justify-between">
+                                                {/* Overlay Text */}
+                                                <div className="mb-4">
+                                                    <h1 className="text-lg font-bold mb-2">WE ARE HIRING1</h1>
+                                                    <h2 className="text-md">JOIN OUR TEAM</h2>
                                                 </div>
-                                                <div className="flex flex-col w-full md:w-1/2 pl-4">
-                                                    <span className="text-sm font-semibold mb-2">Company:</span>
-                                                    <p className="text-xs">{post.company}</p>
-                                                    <span className="text-sm font-semibold mb-2">Location:</span>
-                                                    <p className="text-xs">{post.location}</p>
-                                                    <span className="text-sm font-semibold mt-2">Job Type:</span>
-                                                    <p className="text-xs">{post.jobType}</p>
+
+                                                {/* Job Information */}
+                                                <div className="flex flex-col md:flex-row justify-between w-full h-full">
+                                                    <div className="flex flex-col w-full md:w-1/2 pr-4 mb-4 md:mb-0">
+                                                        <span className="text-sm font-semibold mb-2">Description:</span>
+                                                        <p className="text-xs">{post.description}</p>
+                                                        <span className="text-sm font-semibold mb-2">Requirements:</span>
+                                                        <p className="text-xs">{post.requirements}</p>
+                                                    </div>
+                                                    <div className="flex flex-col w-full md:w-1/2 pl-4">
+                                                        <span className="text-sm font-semibold mb-2">Company:</span>
+                                                        <p className="text-xs">{post.company}</p>
+                                                        <span className="text-sm font-semibold mb-2">Location:</span>
+                                                        <p className="text-xs">{post.location}</p>
+                                                        <span className="text-sm font-semibold mt-2">Job Type:</span>
+                                                        <p className="text-xs">{post.jobType}</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </section>
+                                ))}
+                            </section>
                         )
+                    )}
+                    <button onClick={() => toggleView('info')}>Profile information</button>
+                    <button onClick={() => toggleView('bookmarked')}>Favourites</button>
+                    {user.role === 'job_seeker' && jobSeekerProfile && viewMode === 'info' && (
+                        <div>
+                            <div className='mt-7 w-full p-4 border border-gray-200 rounded-lg'>
+                                <h3 className='text-xl font-semibold mb-4'>Job Seeker Profile</h3>
+                                <div>
+                                    <p><strong>Location:</strong> {jobSeekerProfile.location}</p>
+                                    <p><strong>School:</strong> {jobSeekerProfile.school}</p>
+                                    <p><strong>Diploma:</strong> {jobSeekerProfile.diploma_name}</p>
+                                    <p><strong>Skills:</strong> {jobSeekerProfile.skills.join(', ')}</p>
+                                    <p><strong>Projects:</strong> {jobSeekerProfile.projects.join(', ')}</p>
+                                    <p><strong>Work Experience:</strong> {jobSeekerProfile.workExperience}</p>
+                                    <p><strong>Languages:</strong> {jobSeekerProfile.languages}</p>
+                                    <p><strong>Hobbies:</strong> {jobSeekerProfile.hobbies.join(', ')}</p>
+                                    <p><strong>Description:</strong> {jobSeekerProfile.description}</p>
+                                    <p><strong>Job Type:</strong> {jobSeekerProfile.job_type}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {user.role === 'job_seeker' && viewMode === 'bookmarked' && (
+                       <section className='w-full flex flex-wrap gap-7 items-center justify-center md:justify-start mb-5'>
+                       {bookmarkedPosts.map((post, index) => (
+                           <div key={index} onClick={() => selectPost(post)} className='w-[293px] h-[293px] cursor-pointer relative'>
+                               <img src={post.image} className="object-cover w-full h-full filter blur-sm" style={{ filter: 'blur(3px)' }} />
+                               <div className="absolute inset-0 flex items-center justify-center">
+                                   <div className="bg-white bg-opacity-70 p-6 rounded-md text-center w-full h-full flex flex-col justify-between">
+                                       {/* Overlay Text */}
+                                       <div className="mb-4">
+                                           <h1 className="text-lg font-bold mb-2">WE ARE HIRING1</h1>
+                                           <h2 className="text-md">JOIN OUR TEAM</h2>
+                                       </div>
+
+                                       {/* Job Information */}
+                                       <div className="flex flex-col md:flex-row justify-between w-full h-full">
+                                           <div className="flex flex-col w-full md:w-1/2 pr-4 mb-4 md:mb-0">
+                                               <span className="text-sm font-semibold mb-2">Description:</span>
+                                               <p className="text-xs">{post.description}</p>
+                                               <span className="text-sm font-semibold mb-2">Requirements:</span>
+                                               <p className="text-xs">{post.requirements}</p>
+                                           </div>
+                                           <div className="flex flex-col w-full md:w-1/2 pl-4">
+                                               <span className="text-sm font-semibold mb-2">Company:</span>
+                                               <p className="text-xs">{post.company}</p>
+                                               <span className="text-sm font-semibold mb-2">Location:</span>
+                                               <p className="text-xs">{post.location}</p>
+                                               <span className="text-sm font-semibold mt-2">Job Type:</span>
+                                               <p className="text-xs">{post.jobType}</p>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       ))}
+                   </section>
                     )}
                 </div>
             </main>

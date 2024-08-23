@@ -8,6 +8,7 @@ import fs from 'fs'
 import crypto from 'crypto';
 import mailgun from 'mailgun-js'; // Mailgun API client
 import dotenv from 'dotenv';
+import JobSeekerProfile from '../../models/jobSeekerProfile.js';
 
 dotenv.config();
 const mg = mailgun({
@@ -21,20 +22,20 @@ const mg = mailgun({
 export const requestPasswordReset = async (req, res) => {
     console.log("we got here1");
     //const { email } = req.body;
-    const {token , email} = req.body;
-     console.log("we got here1",email);
+    const { token, email } = req.body;
+    console.log("we got here1", email);
     if (!email) return res.status(400).send("Email is required");
     console.log("we got here2");
     const user = await User.findOne({ mail: email });
 
     if (!user) return res.status(404).send("User not found");
-    
+
     const resetToken = crypto.randomBytes(20).toString('hex');
-    console.log("we got here4",resetToken);
+    console.log("we got here4", resetToken);
     user.resetToken = resetToken;
-    console.log("we got here4",user.resetToken);
+    console.log("we got here4", user.resetToken);
     user.resetTokenExpires = Date.now() + 3600000; // 1 hour
-    console.log("we got here4",user.resetTokenExpires);
+    console.log("we got here4", user.resetTokenExpires);
     await user.save();
     console.log("we got here4");
     // Send reset token to user via email
@@ -47,16 +48,16 @@ export const requestPasswordReset = async (req, res) => {
     };
 
     mg.messages().send(mailOptions, (error, body) => {
-        if (error) return console.log("error",error);
+        if (error) return console.log("error", error);
         res.send("Password reset link sent to your email");
     });
 };
 
 // Reset the password
 export const resetPassword = async (req, res) => {
-    console.log("req.body is",req.body);
+    console.log("req.body is", req.body);
     const { token, EncyptedPassword } = req.body;
-    console.log("token",token);
+    console.log("token", token);
     console.log("newPassword", EncyptedPassword)
     if (!token || !EncyptedPassword) return res.status(400).send("Token and new password are required");
 
@@ -79,17 +80,15 @@ export const resetPassword = async (req, res) => {
 
 // Get user profile information
 export const getUser = async (req, res) => {
-    console.log("did we come here ? fatma??");
+
     const { userID, username } = req.query
-    console.log("did we come here ? fatma??",userID, username);
     if (!userID && !username) return res.status(400).send("Bad field")
 
     var searchQurey;
     if (userID) searchQurey = { id: userID }
     else if (username) searchQurey = { username: username }
-    console.log("did we come here ? fatma??",searchQurey);
+
     const user = await User.findOne(searchQurey)
-    console.log("did we come here ? fatma??",user);
     if (!user) return res.status(404).send("User not found")
     user.password = null
 
@@ -167,7 +166,58 @@ export const updateUser = async (req, res) => {
         res.send(user)
     }, 50);
 }
+export const updateJobSeekerProfile = async (req, res) => {
+    try {
+        console.log('reqbody', req.body);
+        const  data = req.body;
+        const { userID } = req.params;
 
+        console.log("data and token and userID2", data)
+        console.log("data and token and userID3", userID)
+        if (!userID) {
+            return res.status(400).send("User ID is required");
+        }
+        // Find the User document by userID
+        const user = await User.findOne({ id: userID });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        // Use the user's _id for querying the job seeker profile
+        const userObjectId = user._id;
+        console.log('we have userid')
+
+        // Find the job seeker profile by userId
+        let profile = await JobSeekerProfile.findOne({ user_id: userObjectId });
+        console.log("we have profile", profile)
+        if (!profile) {
+            console.log('we dont have profile')
+            // If profile does not exist, create a new one
+            profile = new JobSeekerProfile({ user_id: userObjectId, ...data });
+            console.log('added profile')
+        } else {
+            // Update existing profile with provided data
+            console.log('here')
+            for (const key of Object.keys(data)) {
+                console.log('here1',key)
+                if (key in profile) {
+                    console.log('here2',key)
+                    profile[key] = data[key];
+                }
+            }
+        }
+        console.log('here3')
+        // Save the updated or new profile
+        await profile.save();
+        console.log('here4')
+        // Send a response with the updated profile
+        res.send(profile);
+        console.log('here5')
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal server error");
+    }
+};
 // Upload profile picture (if have old avatar delete this)
 export const uploadAvatar = async (req, res) => {
     const { id } = req.body
@@ -195,8 +245,8 @@ export const uploadAvatar = async (req, res) => {
     console.log("the file name is", fileName)
     await sharp(file.buffer)
         .resize(300, 300)
-        .toFile(path +"/"+ fileName);
-        console.log("the file name and the path is ",path+"/"+fileName );
+        .toFile(path + "/" + fileName);
+    console.log("the file name and the path is ", path + "/" + fileName);
     const avatarPath = `http://localhost:3030/images/${fileName}`
 
     user.avatar = avatarPath
@@ -208,6 +258,33 @@ export const uploadAvatar = async (req, res) => {
     }, 50);
 
 }
+
+export const getJobSeekerProfile = async (req, res) => {
+    try {
+        console.log("fetching job seeker");
+        const userId = req.params.userId;
+        console.log("fetching job seeker1",userId);
+        const user = await User.findOne({ id: userId });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        // Use the user's _id for querying the job seeker profile
+        const userObjectId = user._id;
+        // Fetch the job seeker profile from the database
+        const jobSeeker = await JobSeekerProfile.findOne({ user_id: userObjectId } ).exec();
+        console.log("fetching job seeker2",jobSeeker);
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'Job seeker not found' });
+        }
+        console.log("fetching job seeker3");
+        // Send the job seeker profile data as a response
+        res.status(200).json(jobSeeker);
+    } catch (error) {
+        console.error('Error fetching job seeker profile:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 // Follow a user
 export const followUser = async (req, res) => {

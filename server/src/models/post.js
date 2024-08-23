@@ -1,8 +1,16 @@
 import { Schema, model } from'mongoose';
 import mongoose from'mongoose';
 
+const applicationSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    status: {
+        type: String,
+        enum: ['on hold', 'accepted', 'declined'],
+        default: 'on hold'
+    },
+});
 const postSchema = new Schema({
-    id: Number,
+    id: { type: Number, required: true, unique: true },
     user: { type: String, ref: 'User' },
     createdDate: Date,
     content: String,
@@ -13,7 +21,7 @@ const postSchema = new Schema({
     company: String,
     location: String, 
     jobType:String,
-    applicants: [{ type: Schema.Types.ObjectId, ref: 'User' }] 
+    applicants: [applicationSchema],
 });
 
 export default model('Post', postSchema);

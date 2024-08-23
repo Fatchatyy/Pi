@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import defaultAvatar from '../assets/img/default_avatar.jpg'
-import { uploadAvatar, updateUser, removeAvatar } from '../api/request'
+import { uploadAvatar, updateUser, removeAvatar, updateJobSeekerProfile } from '../api/request'
 import { loginStore, removeAvatarStore } from '../store/user'
 
 function App() {
@@ -16,6 +16,18 @@ function App() {
     const [username, setUsername] = useState(null)
     const [biography, setBiography] = useState(null)
     const [mail, setMail] = useState(null)
+
+    // State variables for job seeker profile information
+    const [location, setLocation] = useState('');
+    const [school, setSchool] = useState('');
+    const [diplomaName, setDiplomaName] = useState('');
+    const [skills, setSkills] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [workExperience, setWorkExperience] = useState('');
+    const [languages, setLanguages] = useState('');
+    const [hobbies, setHobbies] = useState([]);
+    const [description, setDescription] = useState('');
+    const [jobType, setJobType] = useState('');
 
     const removeAvatarManager = () => {
         setAlert(false)
@@ -49,6 +61,66 @@ function App() {
             setAlert(false)
         })
     }
+    const updateJobSeekerProfileInfo = () => {
+        const profileData = {
+            location,
+            school,
+            diploma_name: diplomaName,
+            skills,
+            projects,
+            work_experience: workExperience,
+            languages,
+            hobbies,
+            description,
+            job_type: jobType
+        };
+        const userId = user.id;
+        updateJobSeekerProfile(
+            { data: profileData, token: user.token, userId },
+            response => {
+                dispatch(loginStore(response));
+            }
+        );
+    }; const addSkill = () => {
+        setSkills([...skills, '']);
+    };
+
+    const removeSkill = (index) => {
+        setSkills(skills.filter((_, i) => i !== index));
+    };
+
+    const updateSkill = (index, value) => {
+        const updatedSkills = skills.map((skill, i) => (i === index ? value : skill));
+        setSkills(updatedSkills);
+    };
+    const addProject = () => {
+        setProjects([...projects, { name: '', description: '' }]);
+    };
+
+    const removeProject = (index) => {
+        setProjects(projects.filter((_, i) => i !== index));
+    };
+
+    const updateProject = (index, field, value) => {
+        const updatedProjects = projects.map((project, i) =>
+            i === index ? { ...project, [field]: value } : project
+        );
+        setProjects(updatedProjects);
+    };
+    const addHobby = () => {
+        setHobbies([...hobbies, { name: '' }]);
+    };
+
+    const removeHobby = (index) => {
+        setHobbies(hobbies.filter((_, i) => i !== index));
+    };
+
+    const updateHobby = (index, value) => {
+        const updatedHobbies = hobbies.map((hobby, i) =>
+            i === index ? { ...hobby, name: value } : hobby
+        );
+        setHobbies(updatedHobbies);
+    };
 
     useEffect(() => {
         if (!user.token) return navigate("/");
@@ -102,7 +174,7 @@ function App() {
                         Push notification
                     </a>
                     <a href="#" className="w-full py-4 leading-5 pl-[30px] pr-4 flex items-center justify-start border-l-2 border-transparent hover:border-gray-200 hover:bg-gray-50 " >
-                       Manage contacts
+                        Manage contacts
                     </a>
                     <a href="#" className="w-full py-4 leading-5 pl-[30px] pr-4 flex items-center justify-start border-l-2 border-transparent hover:border-gray-200 hover:bg-gray-50 " >
                         Privacy and settings
@@ -139,7 +211,7 @@ function App() {
                                     className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
                                 />
                                 <span className='text-[#8E8E8E] text-xs max-w-[355px] !leading-4 mt-4 ' >
-                                Help people discover your account by using a name you are known by, such as your first and last name, nickname , or business name.
+                                    Help people discover your account by using a name you are known by, such as your first and last name, nickname , or business name.
                                 </span>
                                 <span className='text-[#8E8E8E] text-xs max-w-[355px] !leading-4 mt-3 ' >
                                     You can only change your name twice in 14 days
@@ -207,7 +279,7 @@ function App() {
                             <div className='flex flex-col ' >
                                 <span className='text-[#8E8E8E] text-sm font-semibold max-w-[355px]' >Personal information</span>
                                 <span className='text-[#8E8E8E] text-xs max-w-[355px] !leading-4 ' >
-                                Even if the account is used for a business, a pet, or something else, individuals should enter their information. These sections will not be visible on their public profile.
+                                    Even if the account is used for a business, a pet, or something else, individuals should enter their information. These sections will not be visible on their public profile.
                                 </span>
                             </div>
                         </div>
@@ -251,6 +323,167 @@ function App() {
                             </div>
                         </div>
                     </div>
+                    {/* Add fields for job seeker profile here */}
+                    <div className='mt-5 w-full'>
+                        <div className='flex items-center h-full'>
+                            <div className='min-w-[194px] flex items-start justify-start h-full'>
+                                <span className='font-semibold ml-auto px-8'>Location</span>
+                            </div>
+                            <div className='flex flex-col'>
+                                <input
+                                    onInput={e => setLocation(e.target.value)}
+                                    value={location}
+                                    type="text"
+                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='mt-5 w-full'>
+                        <div className='flex items-center h-full'>
+                            <div className='min-w-[194px] flex items-start justify-start h-full'>
+                                <span className='font-semibold ml-auto px-8'>School</span>
+                            </div>
+                            <div className='flex flex-col'>
+                                <input
+                                    onInput={e => setSchool(e.target.value)}
+                                    value={school}
+                                    type="text"
+                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Add other job seeker profile fields */}
+                    <div className='mt-5 w-full'>
+                        <div className='flex items-center h-full'>
+                            <div className='min-w-[194px] flex items-start justify-start h-full'>
+                                <span className='font-semibold ml-auto px-8'>Diploma Name</span>
+                            </div>
+                            <div className='flex flex-col'>
+                                <input
+                                    onInput={e => setDiplomaName(e.target.value)}
+                                    value={diplomaName}
+                                    type="text"
+                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Skills</h2>
+                        {skills.map((skill, index) => (
+                            <div key={index}>
+                                <input
+                                    type="text"
+                                    value={skill}
+                                    onChange={(e) => updateSkill(index, e.target.value)}
+                                    placeholder={`Skill ${index + 1}`}
+                                />
+                                <button onClick={() => removeSkill(index)}>Remove</button>
+                            </div>
+                        ))}
+                        <button onClick={addSkill}>Add Skill</button>
+                    </div>
+                    <div>
+                        <h2>Projects</h2>
+                        {projects.map((project, index) => (
+                            <div key={index}>
+                                <input
+                                    type="text"
+                                    value={project.name}
+                                    onChange={(e) => updateProject(index, 'name', e.target.value)}
+                                    placeholder={`Project Name ${index + 1}`}
+                                />
+                                <textarea
+                                    value={project.description}
+                                    onChange={(e) => updateProject(index, 'description', e.target.value)}
+                                    placeholder={`Project Description ${index + 1}`}
+                                />
+                                <button onClick={() => removeProject(index)}>Remove</button>
+                            </div>
+                        ))}
+                        <button onClick={addProject}>Add Project</button>
+                    </div>
+                    <div>
+                                <h2>Hobbies</h2>
+                                {hobbies.map((hobby, index) => (
+                                    <div key={index}>
+                                        <input
+                                            type="text"
+                                            value={hobby.name}
+                                            onChange={(e) => updateHobby(index, e.target.value)}
+                                            placeholder={`Hobby ${index + 1}`}
+                                        />
+                                        <button onClick={() => removeHobby(index)}>Remove</button>
+                                    </div>
+                                ))}
+                                <button onClick={addHobby}>Add Hobby</button>
+                            </div>
+                    <div className='mt-5 w-full'>
+                        <div className='flex items-center h-full'>
+                            <div className='min-w-[194px] flex items-start justify-start h-full'>
+                                <span className='font-semibold ml-auto px-8'>Work Experience</span>
+                            </div>
+                            <div className='flex flex-col'>
+                                <input
+                                    onInput={e => setWorkExperience(e.target.value)}
+                                    value={workExperience}
+                                    type="text"
+                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className='mt-5 w-full'>
+                        <div className='flex items-center h-full'>
+                            <div className='min-w-[194px] flex items-start justify-start h-full'>
+                                <span className='font-semibold ml-auto px-8'>languages</span>
+                            </div>
+                            <div className='flex flex-col'>
+                                <input
+                                    onInput={e => setLanguages(e.target.value)}
+                                    value={languages}
+                                    type="text"
+                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className='mt-5 w-full'>
+                        <div className='flex items-center h-full'>
+                            <div className='min-w-[194px] flex items-start justify-start h-full'>
+                                <span className='font-semibold ml-auto px-8'>Description</span>
+                            </div>
+                            <div className='flex flex-col'>
+                                <input
+                                    onInput={e => setDescription(e.target.value)}
+                                    value={description}
+                                    type="text"
+                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
+                                />
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div className='mt-5 w-full'>
+                            <div className='flex items-center h-full'>
+                                <div className='min-w-[194px] flex items-start justify-start h-full'>
+                                    <span className='font-semibold ml-auto px-8'>JobType</span>
+                                </div>
+                                <div className='flex flex-col'>
+                                    <input
+                                        onInput={e => setJobType(e.target.value)}
+                                        value={jobType}
+                                        type="text"
+                                        className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
+                                    />
+                                </div>
+                            </div>
+                           
+                        </div>
 
                     <div className='mt-auto mb-8 w-full ' >
                         <div className='flex items-center h-full' >
@@ -260,6 +493,9 @@ function App() {
                                 <button onClick={updateInformation} className='w-full flex items-center px-3 justify-center bg-[#139DF7] h-[30px] rounded-[4px] ' >
                                     <span className='font-semibold text-white text-sm' >Send</span>
                                 </button>
+                                <button onClick={updateJobSeekerProfileInfo} className='mt-8 py-2 px-6 bg-green-500 text-white rounded-md'>
+                        Update Job Seeker Profile
+                    </button>
                             </div>
                         </div>
                     </div>
