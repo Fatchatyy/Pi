@@ -12,6 +12,7 @@ export const FOLLOW_USER = "/follow"
 export const UNFOLLOW_USER = "/unfollow"
 export const REMOVE_AVATAR = "/remove-avatar"
 export const REMOVE_FOLLOWER = "/remove-follower"
+export const APPLY_FOR_JOB = '/jobs/apply';
 
 /* GET */
 export const GET_HOME = "/home"

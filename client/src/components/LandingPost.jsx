@@ -17,7 +17,7 @@ function App({ post, user, selectPost }) {
                         <div className="bg-white bg-opacity-70 p-12 rounded-md text-center w-full h-full flex flex-col justify-between">
                             {/* Overlay Text */}
                             <div className="mb-12">
-                                <h1 className="text-6xl font-bold mb-6">WE ARE HIRING</h1>
+                                <h1 className="text-6xl font-bold mb-6">WE ARE HIRING3</h1>
                                 <h2 className="text-4xl mb-4">JOIN OUR TEAM</h2>
                                 <div className="text-3xl font-semibold mb-8">{post.jobType}</div>
                             </div>

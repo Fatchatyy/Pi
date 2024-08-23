@@ -12,6 +12,7 @@ const jobSeekerProfile = new Schema({
     hobbies: Array,
     description: String,
     job_type: String,
+    
 })
 
 export default model('jobSeekerProfile', jobSeekerProfile)

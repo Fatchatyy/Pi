@@ -21,6 +21,7 @@ const userSchema = new Schema({
     bookmarks: Array,
     resetToken: String,
     resetTokenExpires: Date,
+    applications: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
 })
 
 export default model('User', userSchema)

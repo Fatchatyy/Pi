@@ -121,7 +121,13 @@ export const resetPassword = (token, EncyptedPassword) => {
     console.log("newPassworddd",EncyptedPassword);
     return postMethod2(urls.RESET_PASSWORD, { token, EncyptedPassword });
 }
+// Add this new function for applying to a job
+export const applyForJob = (jobId,userID, token, responseCB, loadingCB) => {
+    console.log("Applying for job with ID:", jobId, "and userId", userID);
+    const url = `${urls.APPLY_FOR_JOB}/${jobId}/${userID}`; // Adjust the URL as needed
 
+    return postMethod(url, { token }, responseCB, loadingCB);
+}
 export const createPost = (...args) => {
     console.log("e7m e7m e7m", ...args);
     return postMethod(urls.CREATE_POST, ...args)

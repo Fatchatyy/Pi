@@ -7,15 +7,40 @@ import { useEffect, useState } from 'react';
 import { getUser } from '../api/request';
 import defaultAvatar from '../assets/img/default_avatar.jpg';
 import { useNavigate } from 'react-router-dom';
+import { applyForJob } from '../api/request'; 
 
-function App({ date, content, image, userID, description, requirements, company, location, jobType }) {
+function App({token, date, content, image, userID, description, requirements, company, location, jobType,jobId}) {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const [isApplying, setIsApplying] = useState(false);
+    const [applyError, setApplyError] = useState(null);
 
     const goUser = () => {
         console.log("going to user", user.username);
         navigate(`${user.username}`);
     };
+    const handleApply = async () => {
+        console.log("applying for a job1", token )
+         // Ensure user is logged in
+        setIsApplying(true);
+        setApplyError(null);
+        console.log("applying for a job2",userID)
+        try {
+            console.log("applying for a job3", jobId)
+          await applyForJob(jobId,userID, token, (data) => {
+            // Handle success callback if needed
+            console.log('Job application response:', data);
+            alert('Applied successfully!');
+          }, (loading) => {
+            // Handle loading callback if needed
+            setIsApplying(loading);
+          });
+        } catch (error) {
+          setApplyError('Failed to apply. Please try again later.');
+        } finally {
+          setIsApplying(false);
+        }
+      };
 
     useEffect(() => {
         console.log("Fetching post data", { userID, content, image, date, description, requirements, company, location, jobType });
@@ -38,7 +63,7 @@ function App({ date, content, image, userID, description, requirements, company,
     <img src={image} className="object-cover w-full h-full" style={{ filter: 'blur(3px)' }} />
     <div className="absolute inset-0 flex items-center justify-center">
         <div className="bg-white bg-opacity-70 m-10 rounded-md text-center max-w-md w-full min-h-[400px] flex flex-col items-center p-6">
-            <h1 className="text-3xl font-bold mb-2">WE ARE HIRING</h1>
+            <h1 className="text-3xl font-bold mb-2">WE ARE HIRING2</h1>
             <h2 className="text-xl mb-4">JOIN OUR TEAM</h2>
             <span className="text-lg font-semibold mb-4">{jobType}</span>
             <div className="flex flex-col md:flex-row justify-between w-full">
@@ -55,6 +80,15 @@ function App({ date, content, image, userID, description, requirements, company,
             </div>
         </div>
     </div>
+    <button
+        onClick={handleApply}
+        disabled={isApplying}
+        className='bg-blue-500 text-white py-2 px-4 rounded-md mt-4 mx-3'
+      >
+        {isApplying ? 'Applying...' : 'Apply for this Job'}
+      </button>
+
+      {applyError && <p className='text-red-500 text-center'>{applyError}</p>}
 </div>
 
 

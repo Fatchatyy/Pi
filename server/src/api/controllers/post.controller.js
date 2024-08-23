@@ -3,6 +3,8 @@ import User from '../../models/user.js'
 import sharp  from 'sharp'
 import { v4 }  from 'uuid'
 import uid from '../../utils/createUID'
+import JobSeekerProfile from '../../models/jobSeekerProfile.js';
+import user from '../../models/user.js'
 
 
 /* POST ENDPOINTS */
@@ -66,4 +68,42 @@ export const createPost = async (req, res) => {
     await post.save()
 
     res.send(post)
+}
+
+// Apply for a job offer
+export const applyForJob = async (req, res) => {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    const { postId } = req.params;
+   
+    const { userID } = req.params; // Assuming the user is authenticated and user ID is available
+    console.log("applying for a job", userID ,"and post id", postId);
+    try {
+        // Find the job seeker profile (if needed for other logic)
+        const User = await user.findOne({ id: userID });
+        console.log("did we find the user? " ,User);
+        if (!User) {
+            return res.status(404).send("Job seeker profile not found");
+        }
+        console.log("now looking for the post");
+        // Add the job seeker to the post's applicants list
+        const post = await Post.findOneAndUpdate(postId, {
+            $addToSet: { applicants: User._id }
+        }, { new: true });
+        console.log("did we find the post ", post );
+
+        if (!post) {
+            return res.status(404).send("Post not found");
+        }
+        console.log("now we are here");
+
+        // Optionally, update the job seeker's profile to reflect the applied job
+        await user.findOneAndUpdate(
+            { id: userID },
+            { $addToSet: { applications: post._id } }
+        );
+        console.log('now we are here finally ')
+        res.status(200).json({ message: 'Applied successfully', post });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 }

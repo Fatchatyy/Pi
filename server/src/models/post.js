@@ -12,7 +12,8 @@ const postSchema = new Schema({
     requirements:String,
     company: String,
     location: String, 
-    jobType:String
+    jobType:String,
+    applicants: [{ type: Schema.Types.ObjectId, ref: 'User' }] 
 });
 
 export default model('Post', postSchema);

@@ -68,7 +68,7 @@ function App() {
         <div id='posts-section' className='mt-5 w-full pb-5' >
           {
             posts.map((post, index) => {
-              return <Post key={index} date={post.data} content={post.content} image={post.image} userID={post.user} description={post.description} requirements={post.requirements} company={post.company} location={post.location} jobType={post.jobType} />
+              return <Post key={index} token={user.token} date={post.data} content={post.content} image={post.image} userID={post.user} description={post.description} requirements={post.requirements} company={post.company} location={post.location} jobType={post.jobType} jobId={post.id} />
             })
           }
         </div>

@@ -11,12 +11,14 @@ import {
     removeAvatar,
     removeFollower,
     requestPasswordReset,
-    resetPassword
+    resetPassword,
+    
 } from '../controllers/user.controller'
 import {
     createPost,
     getHome,
-    getPosts
+    getPosts,
+    applyForJob
 } from '../controllers/post.controller'
 import auth from '../middleware/auth.js'
 
@@ -37,6 +39,7 @@ router.post("/follow", auth, followUser)
 router.post("/unfollow", auth, unfollowUser)
 router.post("/remove-avatar", auth, removeAvatar)
 router.post("/remove-follower", auth, removeFollower)
+router.post('/jobs/apply/:postId/:userID',auth ,applyForJob); 
 router.post('/request-password-reset', requestPasswordReset);
 router.post('/reset-password', resetPassword);
 

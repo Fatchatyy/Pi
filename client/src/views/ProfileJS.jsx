@@ -219,7 +219,7 @@ function App() {
                 <div className="bg-white bg-opacity-70 p-6 rounded-md text-center w-full h-full flex flex-col justify-between">
                     {/* Overlay Text */}
                     <div className="mb-4">
-                        <h1 className="text-lg font-bold mb-2">WE ARE HIRING</h1>
+                        <h1 className="text-lg font-bold mb-2">WE ARE HIRINKJGKBG</h1>
                         <h2 className="text-md">JOIN OUR TEAM</h2>
                     </div>
 
