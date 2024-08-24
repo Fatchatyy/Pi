@@ -21,7 +21,9 @@ import {
     getPosts,
     applyForJob,
     toggleBookmark,
-    getBookmarkedPosts
+    getBookmarkedPosts,
+    generateNotificationsForUser,
+    getNotificationsForUser
 } from '../controllers/post.controller'
 import auth from '../middleware/auth.js'
 
@@ -45,6 +47,7 @@ router.post("/remove-follower", auth, removeFollower)
 router.post('/jobs/apply/:postId/:userID',auth ,applyForJob); 
 router.post('/update-job-seeker-profile/:userID',auth, updateJobSeekerProfile);
 router.post('/toggle-bookmark/:userId/:postId',auth, toggleBookmark);
+router.post('/generate-notification/:userId',auth,generateNotificationsForUser)
 router.post('/request-password-reset', requestPasswordReset);
 router.post('/reset-password', resetPassword);
 
@@ -55,5 +58,6 @@ router.get("/user", getUser)
 router.get("/get-posts", getPosts)
 router.get('/job-seeker-profile/:userId',getJobSeekerProfile);
 router.get('/bookmarked-posts/:userID', getBookmarkedPosts);
+router.get('/get-notification/:userId',getNotificationsForUser);
 
 export default router;

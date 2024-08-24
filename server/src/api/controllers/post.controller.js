@@ -5,6 +5,9 @@ import { v4 }  from 'uuid'
 import uid from '../../utils/createUID'
 import JobSeekerProfile from '../../models/jobSeekerProfile.js';
 import user from '../../models/user.js'
+import notifications from '../../models/notifications.js'
+
+
 
 
 /* POST ENDPOINTS */
@@ -177,5 +180,62 @@ export const getBookmarkedPosts = async (req, res) => {
     } catch (error) {
         console.error('Error fetching bookmarked posts:', error);
         return res.status(500).json({ message: 'Error fetching bookmarked posts', error });
+    }
+};
+export const generateNotificationsForUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        console.log('the user id :D', userId);
+        // Find the user and their skills
+        const user = await User.findOne({id : userId});
+        if (!user) throw new Error('User not found');
+
+        const userObjectId = user._id;
+        let jobseeker = await JobSeekerProfile.findOne({ user_id: userObjectId }).populate('skills');
+
+        // Fetch job offers and their requirements
+        const jobOffers = await Post.find({});
+
+          // Filter job offers that match user's skills
+          const notificationss = [];
+          for (const jobOffer of jobOffers) {
+              // Convert job offer requirements to an array if it's a string
+              const requirementsArray = jobOffer.requirements.split(',').map(req => req.trim());
+                console.log("requiremenetArray: " , requirementsArray);
+              // Check if any of the user's skills match the requirements
+              const matches = jobseeker.skills.some(skill =>  requirementsArray.includes( skill ));
+              console.log("marches",matches);
+              if (matches) {
+                console.log("are there any matches", matches , userId);
+                  notificationss.push({
+                      userID : userId,
+                      message: `Your skill matches the requirements for the job offer titled: ${jobOffer.title}`,
+                      jobOfferID: jobOffer._id
+                  });
+              }
+          }
+
+        // Save notifications
+        await notifications.insertMany(notificationss);
+
+        return notificationss;
+    } catch (error) {
+        console.error('Error generating notifications:', error);
+        throw error;
+    }
+};
+export const getNotificationsForUser = async (req, res) => {
+    try {
+        console.log("notifications")
+        const { userId } = req.params;
+        console.log("notifications2",userId);
+        const notificationss = await notifications.find({ userId }).populate('jobOfferID');
+        console.log("notifications3", notificationss);
+        if (!notificationss.length) return res.status(404).json({ message: 'No notifications found' });
+        console.log("notifications4")
+        return res.status(200).json(notificationss);
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        return res.status(500).json({ message: 'Error fetching notifications', error });
     }
 };

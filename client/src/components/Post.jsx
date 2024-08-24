@@ -18,22 +18,16 @@ function App({token,userI, date, content, image, userID, description, requiremen
     const [isLoadingBookmark, setIsLoadingBookmark] = useState(false); // To show loading state
 
     const goUser = () => {
-        console.log("going to user", user.username);
+
         navigate(`${user.username}`);
     };
     const handleApply = async () => {
-        console.log("applying for a job1", token);
         // Ensure user is logged in
         setIsApplying(true);
         setApplyError(null);
-        console.log("applying for a job2", userID);
-    
         try {
-            console.log("applying for a job3", jobId);
-    
             await applyForJob(jobId, userID, token, (data) => {
                 // Handle success callback if needed
-                console.log('Job application response:', data);
                 if (data.message === 'Applied successfully') {
                     alert('Applied successfully!');
                 }else {
@@ -61,11 +55,9 @@ function App({token,userI, date, content, image, userID, description, requiremen
             userId: userID, // The logged-in user ID
             postId: jobId, // The post ID you want to bookmark
         };
-        console.log("info0", userID, jobId);
         toggleBookmark(params,token, (data) => {
             if (data) {
                 setIsBookmarked(!isBookmarked); // Toggle bookmark status
-                console.log("yey or nay");
                 alert(data.message);
             }
         }, (loading) => {
@@ -74,7 +66,6 @@ function App({token,userI, date, content, image, userID, description, requiremen
     };
 
     useEffect(() => {
-        console.log("Fetching post data", { userI ,userID, content, image, date, description, requirements, company, location, jobType });
         getUser({ id: userI }, setUser);
     }, [userI, content, image, date, description, requirements, company, location, jobType]);
 

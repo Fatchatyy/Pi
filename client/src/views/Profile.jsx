@@ -58,13 +58,11 @@ function Profile() {
             setFollowers(response.followers)
             setFollowing(response.following)
         })
-        console.log('the role', response.role);
         if (!response) return navigate("/")
         if (response.role === 'hr') {
             getPosts(response.id, setPosts, setLoading)
         }
         if (response.role === 'job_seeker') {
-            console.log("it is a job seeker", response.role);
             getJobSeekerProfile(response.id, setJobSeekerProfile, setLoading)
             getBookmarkedPosts(response.id, setBookmarkedPosts, setLoading);
             
@@ -155,7 +153,6 @@ function Profile() {
     }, [path])
     const toggleView = (mode) => {
         setViewMode(mode);
-        console.log("toggled", viewMode);
     }
 
     if (user) return (

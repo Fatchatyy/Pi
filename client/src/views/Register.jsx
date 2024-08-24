@@ -31,7 +31,6 @@ function App() {
     }, [username, password, name, mail])
 
     const register = async () => {
-        console.log("registering user",role);
         let data = {
             mail,
             name,
@@ -44,7 +43,6 @@ function App() {
             dispatch(loginStore(response))
             navigate("/")
         })
-        console.log("registeringgg or red");
     }
 
 

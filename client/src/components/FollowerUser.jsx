@@ -13,7 +13,6 @@ function App({ id, self, mode }) {
     const dispatch = useDispatch()
 
     useState(() => {
-        console.log('maybe this is being called')
         if (!user) {
             getUser({ id: id }, response => {
                 setUser(response)

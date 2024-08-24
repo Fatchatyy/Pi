@@ -9,7 +9,6 @@ const ForgotPasswordView = () => {
 
     const handleSubmit = async () => {
         try {
-            console.log('email is it here ?', email);
             await requestPasswordReset(email);
             alert('Password reset link sent to your email');
               

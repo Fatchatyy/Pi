@@ -16,14 +16,9 @@ function App() {
   const path = useLocation()
 
   useEffect(() => {
-    console.log("posts???",posts);
-    console.log("user.id",user )
     if (!user.token) return navigate("/login")
-     
     setHome([])
-   console.log("sethome ? ")
     getHome(setHome)
-    console.log("are posts here now? ", posts );
   }, [path])
 
   if (user.token) return (

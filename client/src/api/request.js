@@ -112,24 +112,20 @@ export const registerUser = (...args) => {
 }
 // Request Password Reset
 export const requestPasswordReset = (email) => {
-    console.log("we reached the api with args", email);
     return postMethod3(urls.REQUEST_PASSWORD_RESET, {email});
 }
 
 export const resetPassword = (token, EncyptedPassword) => {
-    console.log("tokennn",token);
-    console.log("newPassworddd",EncyptedPassword);
     return postMethod2(urls.RESET_PASSWORD, { token, EncyptedPassword });
 }
 // Add this new function for applying to a job
 export const applyForJob = (jobId,userID, token, responseCB, loadingCB) => {
-    console.log("Applying for job with ID:", jobId, "and userId", userID);
     const url = `${urls.APPLY_FOR_JOB}/${jobId}/${userID}`; // Adjust the URL as needed
 
     return postMethod(url, { token }, responseCB, loadingCB);
 }
 export const createPost = (...args) => {
-    console.log("e7m e7m e7m", ...args);
+
     return postMethod(urls.CREATE_POST, ...args)
 }
 
@@ -138,14 +134,11 @@ export const uploadAvatar = (...args) => {
 }
 export const updateJobSeekerProfile = (params, responseCB, loadingCB) => {
     const {userId} = params;
-    console.log('the paraaaaaaaamsss', params);
-    console.log('the userrrrrrrrrrID', userId);
     const url = `${urls.UPDATE_JOB_SEEKER_PROFILE}/${userId}`
     return postMethod(url, params, responseCB);
 };
 export const toggleBookmark = (params,token, responseCB, loadingCB) => {
     const {userId,postId}=params;
-    console.log("the params of bookmark", userId, postId);
     const url = `${urls.TOGGLE_BOOKMARK}/${userId}/${postId}`;
     
     return postMethod(url, {token}, responseCB, loadingCB);
@@ -171,12 +164,30 @@ export const removeFollower = (...args) => {
     return postMethod(urls.REMOVE_FOLLOWER, ...args)
 }
 
+
+export const markNotificationAsRead = (notificationID, token, responseCB, loadingCB) => {
+    console.log("Marking notification as read", notificationID);
+    const url = `${urls.MARK_NOTIFICATION_AS_READ}/${notificationID}`;
+    
+    return postMethod(url, { token }, responseCB, loadingCB);
+};
+export const getUserNotifications = (userID, ...args) => {
+    console.log("Fetching notifications for userID", userID);
+    const url = `${urls.GET_USER_NOTIFICATIONS}/${userID}`;
+    return getMethod(url, ...args);
+};
+export const generateNotifications = (userID, token, responseCB, loadingCB) => {
+    console.log("Generating notifications for userID", userID ,"and the token", token);
+    const url = `${urls.NOTIFICATIONS_GENERATE}/${userID}`;
+    
+    return postMethod(url, { token }, responseCB, loadingCB);
+};
+
 export const getHome = (...args) => {
-    console.log("the args of get home ");
     return getMethod(urls.GET_HOME, ...args)
 }
 export const getJobSeekerProfile = (userId, responseCB, loadingCB) => {
-    console.log('Fetching job seeker profile for userId:', userId);
+
     const url = `${urls.GET_JOB_SEEKER_PROFILE}/${userId}`; // Construct the URL with the userId
     
     return getMethod(url, responseCB, loadingCB);
@@ -194,7 +205,6 @@ export const getPosts = (userID, ...args) => {
     return getMethod(urls.GET_POSTS + `?id=${userID}`, ...args)
 }
 export const getBookmarkedPosts = (userID, ...args) => {
-    console.log("is it userID ", userID);
     const url = `${urls.GET_BOOKMARKED_POSTS}/${userID}`;
     return getMethod(url, ...args);
 };

@@ -1,15 +1,17 @@
-import { BsSearch, BsPlusSquare } from 'react-icons/bs'
+import { BsSearch, BsPlusSquare, BsBell } from 'react-icons/bs'
 import { MdHomeFilled } from 'react-icons/md'
 import { RiMessengerLine } from 'react-icons/ri'
 import { IoCompassOutline } from 'react-icons/io5'
 import instagramText from '../assets/img/instagram-text.png'
 import { AiOutlineHeart } from 'react-icons/ai'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import defaultAvatar from '../assets/img/default_avatar.jpg'
-
+import { getUserNotifications, generateNotifications } from '../api/request';
 import { toggleCreatePost } from '../store/user'
+import { getUser } from '../api/request';
+import LandingPost from '../components/LandingPost'
 
 function App() {
 
@@ -17,7 +19,12 @@ function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const user = useSelector(state => state.user)
-
+  const [user1, setUser] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null); // For handling the selected post
+  const [postUser, setPostUser] = useState(null); 
   const logout = () => {
     location.reload()
   }
@@ -26,15 +33,71 @@ function App() {
     if (!username) return;
     navigate(`/${username}`)
   }
+  useEffect(() => {
+    if (user.token) {
+      console.log("BONJOURRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+      // Fetch user notifications
+      const fetchNotifications = async () => {
+        try {
+          console.log("we are trying to get the notification here")
+          
+          getUserNotifications(user.id, setNotifications,setLoading);
+         
+         
+        } catch (error) {
+          console.error('Error fetching notifications:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      
+
+      // Generate notifications (optional, depending on your use case)
+      const generateUserNotifications = async () => {
+        try {
+          console.log("we are doing the notification now", user.id, user.token)
+          await generateNotifications(user.id, user.token);
+          // Optionally, refetch notifications after generating
+         
+          
+        } catch (error) {
+          console.error('Error generating notifications:', error);
+        }
+      };
+
+      // Call to generate notifications, if needed
+      generateUserNotifications();
+      fetchNotifications();
+    }
+  }, [user.id]);
+  const handleNotificationClick = async (jobOfferId) => {
+    try {
+      console.log("lets see", jobOfferId);
+      setLoading(true);
+     
+      setSelectedPost(jobOfferId); // Set the post
+    
+      console.log("post user isssssssssss", jobOfferId.user)
+      getUser({ id: jobOfferId.user }, setUser);
+      console.log("now we have the user ", user1);
+    } catch (error) {
+      console.error('Error fetching job offer details:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
 
   const blockRenderPaths = [
     "/login",
     "/register"
   ]
-console.log("checking e7m user role", user.role);
+  console.log("checking e7m user role", user.role);
   if (blockRenderPaths.includes(route.pathname)) return null;
 
   if (user.token) return (
+    <>
     <nav className='w-full h-[60px] border-b border-[#DBDBDB] flex items-center justify-center fixed bg-white z-10' >
       <div className='flex items-center justify-between w-[975px] px-5  ' >
         <Link className='mt-2' to="/" >
@@ -54,6 +117,34 @@ console.log("checking e7m user role", user.role);
           )}
           <IoCompassOutline size={28} />
           <AiOutlineHeart size={28} />
+          {/* Notifications Icon and Dropdown */}
+         
+          <div className='relative'>
+            <BsBell
+              size={28}
+              className='cursor-pointer'
+              onClick={() => setShowNotifications(prev => !prev)}
+            />
+            {showNotifications && (
+              <div className='absolute right-0 top-8 bg-white border border-gray-200 shadow-lg rounded w-[250px] py-2'>
+                {loading ? (
+                  <div className='px-4 py-2'>
+                    <span>Loading...</span>
+                  </div>
+                ) : notifications.length > 0 ? (
+                  notifications.map(notification => (
+                    <div key={notification.id} className='px-4 py-2 border-b last:border-b-0 cursor-pointer' onClick={() => handleNotificationClick(notification.jobOfferID)}>
+                      <span>{notification.message}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className='px-4 py-2'>
+                    <span>No notifications</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div> 
 
           <button className='relative group' >
             <img src={user.avatar ?? defaultAvatar} width="24" className='rounded-full cursor-pointer border border-gray-300 ' />
@@ -79,6 +170,11 @@ console.log("checking e7m user role", user.role);
         </div>
       </div>
     </nav>
+     {/* Show post in a modal */}
+     {selectedPost && user1 && (
+      <LandingPost post={selectedPost} user={user1} selectPost={setSelectedPost} />
+    )} 
+</>
   )
 }
 
