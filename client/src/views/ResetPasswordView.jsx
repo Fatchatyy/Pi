@@ -10,11 +10,8 @@ const ResetPasswordView = () => {
 
     const handleSubmit = async () => {
         try {
-            console.log("PASSWORD BEFORE ENCRYPTION", newPassword);
             const encryptedPassword = encrypt(newPassword);
-            console.log("THE ENCRYPTED PASSWORD", encryptedPassword);
             await resetPassword(token, encryptedPassword);
-            console.log("token", token);
             alert('Password has been updated');
         } catch (error) {
             console.error('Error details:', error.message);  // Log the error message

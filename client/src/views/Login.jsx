@@ -56,22 +56,27 @@ function App() {
 
     }, [username, password])
 
-
     const login = async () => {
-
         if (!username || !password) return;
-
+    
         const data = {
             username: encrypt(username),
             password: encrypt(password)
-        }
-
+        };
+    
         loginUser({ data }, response => {
-            dispatch(loginStore(response))
-            navigate("/")
-        })
+            dispatch(loginStore(response));
 
-    }
+            // Check the role from the response
+            if (response.role === 'hr') {
+                // Redirect to /redirect for HR users
+                navigate('/RoleSelection');
+            } else {
+                // Redirect to the default route for other users
+                navigate('/');
+            }
+        });
+    };
 
 
     return (

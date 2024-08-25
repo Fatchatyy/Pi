@@ -35,11 +35,10 @@ function App() {
   }
   useEffect(() => {
     if (user.token) {
-      console.log("BONJOURRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+      if(user.role === 'job_seeker'){
       // Fetch user notifications
       const fetchNotifications = async () => {
         try {
-          console.log("we are trying to get the notification here")
           
           getUserNotifications(user.id, setNotifications,setLoading);
          
@@ -56,7 +55,6 @@ function App() {
       // Generate notifications (optional, depending on your use case)
       const generateUserNotifications = async () => {
         try {
-          console.log("we are doing the notification now", user.id, user.token)
           await generateNotifications(user.id, user.token);
           // Optionally, refetch notifications after generating
          
@@ -70,17 +68,14 @@ function App() {
       generateUserNotifications();
       fetchNotifications();
     }
+  }
   }, [user.id]);
   const handleNotificationClick = async (jobOfferId) => {
     try {
-      console.log("lets see", jobOfferId);
       setLoading(true);
      
       setSelectedPost(jobOfferId); // Set the post
-    
-      console.log("post user isssssssssss", jobOfferId.user)
       getUser({ id: jobOfferId.user }, setUser);
-      console.log("now we have the user ", user1);
     } catch (error) {
       console.error('Error fetching job offer details:', error);
     } finally {
@@ -93,7 +88,6 @@ function App() {
     "/login",
     "/register"
   ]
-  console.log("checking e7m user role", user.role);
   if (blockRenderPaths.includes(route.pathname)) return null;
 
   if (user.token) return (
@@ -119,32 +113,38 @@ function App() {
           <AiOutlineHeart size={28} />
           {/* Notifications Icon and Dropdown */}
          
-          <div className='relative'>
-            <BsBell
-              size={28}
-              className='cursor-pointer'
-              onClick={() => setShowNotifications(prev => !prev)}
-            />
-            {showNotifications && (
-              <div className='absolute right-0 top-8 bg-white border border-gray-200 shadow-lg rounded w-[250px] py-2'>
-                {loading ? (
-                  <div className='px-4 py-2'>
-                    <span>Loading...</span>
-                  </div>
-                ) : notifications.length > 0 ? (
-                  notifications.map(notification => (
-                    <div key={notification.id} className='px-4 py-2 border-b last:border-b-0 cursor-pointer' onClick={() => handleNotificationClick(notification.jobOfferID)}>
-                      <span>{notification.message}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className='px-4 py-2'>
-                    <span>No notifications</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div> 
+          {user.role === 'job_seeker' && (
+  <div className='relative'>
+    <BsBell
+      size={28}
+      className='cursor-pointer'
+      onClick={() => setShowNotifications(prev => !prev)}
+    />
+    {showNotifications && (
+      <div className='absolute right-0 top-8 bg-white border border-gray-200 shadow-lg rounded w-[250px] py-2'>
+        {loading ? (
+          <div className='px-4 py-2'>
+            <span>Loading...</span>
+          </div>
+        ) : notifications.length > 0 ? (
+          notifications.map(notification => (
+            <div
+              key={notification.id}
+              className='px-4 py-2 border-b last:border-b-0 cursor-pointer'
+              onClick={() => handleNotificationClick(notification.jobOfferID)}
+            >
+              <span>{notification.message}</span>
+            </div>
+          ))
+        ) : (
+          <div className='px-4 py-2'>
+            <span>No notifications</span>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+)}
 
           <button className='relative group' >
             <img src={user.avatar ?? defaultAvatar} width="24" className='rounded-full cursor-pointer border border-gray-300 ' />

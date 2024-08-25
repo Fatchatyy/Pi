@@ -5,6 +5,7 @@ import uid from '../../utils/createUID'
 import sharp from 'sharp'
 import { v4 } from 'uuid'
 import fs from 'fs'
+import Token from '../../models/token.js';
 import crypto from 'crypto';
 import mailgun from 'mailgun-js'; // Mailgun API client
 import dotenv from 'dotenv';
@@ -20,24 +21,15 @@ const mg = mailgun({
 
 // Generate a password reset token and send it via email
 export const requestPasswordReset = async (req, res) => {
-    console.log("we got here1");
     //const { email } = req.body;
     const { token, email } = req.body;
-    console.log("we got here1", email);
     if (!email) return res.status(400).send("Email is required");
-    console.log("we got here2");
     const user = await User.findOne({ mail: email });
-
     if (!user) return res.status(404).send("User not found");
-
     const resetToken = crypto.randomBytes(20).toString('hex');
-    console.log("we got here4", resetToken);
     user.resetToken = resetToken;
-    console.log("we got here4", user.resetToken);
     user.resetTokenExpires = Date.now() + 3600000; // 1 hour
-    console.log("we got here4", user.resetTokenExpires);
     await user.save();
-    console.log("we got here4");
     // Send reset token to user via email
     const frontEndUrl = process.env.FRONTEND_URL;
     const mailOptions = {
@@ -55,10 +47,7 @@ export const requestPasswordReset = async (req, res) => {
 
 // Reset the password
 export const resetPassword = async (req, res) => {
-    console.log("req.body is", req.body);
     const { token, EncyptedPassword } = req.body;
-    console.log("token", token);
-    console.log("newPassword", EncyptedPassword)
     if (!token || !EncyptedPassword) return res.status(400).send("Token and new password are required");
 
     const user = await User.findOne({
@@ -126,7 +115,6 @@ export const register = async (req, res) => {
     if (checkUsername) return res.status(500).send("Username taken")
 
     const createID = uid()
-    console.log("the role is here", role);
     const user = new User({
         id: createID,
         name,
@@ -142,7 +130,6 @@ export const register = async (req, res) => {
     let token = createToken(user)
     user.token = token
     user.password = null
-    console.log("user registered successfully");
     res.send(user)
 }
 
@@ -168,12 +155,8 @@ export const updateUser = async (req, res) => {
 }
 export const updateJobSeekerProfile = async (req, res) => {
     try {
-        console.log('reqbody', req.body);
-        const  data = req.body;
+        const data = req.body;
         const { userID } = req.params;
-
-        console.log("data and token and userID2", data)
-        console.log("data and token and userID3", userID)
         if (!userID) {
             return res.status(400).send("User ID is required");
         }
@@ -182,37 +165,25 @@ export const updateJobSeekerProfile = async (req, res) => {
         if (!user) {
             return res.status(404).send("User not found");
         }
-
         // Use the user's _id for querying the job seeker profile
         const userObjectId = user._id;
-        console.log('we have userid')
-
         // Find the job seeker profile by userId
         let profile = await JobSeekerProfile.findOne({ user_id: userObjectId });
-        console.log("we have profile", profile)
         if (!profile) {
-            console.log('we dont have profile')
             // If profile does not exist, create a new one
             profile = new JobSeekerProfile({ user_id: userObjectId, ...data });
-            console.log('added profile')
         } else {
             // Update existing profile with provided data
-            console.log('here')
             for (const key of Object.keys(data)) {
-                console.log('here1',key)
                 if (key in profile) {
-                    console.log('here2',key)
                     profile[key] = data[key];
                 }
             }
         }
-        console.log('here3')
         // Save the updated or new profile
         await profile.save();
-        console.log('here4')
         // Send a response with the updated profile
         res.send(profile);
-        console.log('here5')
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal server error");
@@ -242,11 +213,9 @@ export const uploadAvatar = async (req, res) => {
     }
 
     const fileName = `${v4()}.webp`
-    console.log("the file name is", fileName)
     await sharp(file.buffer)
         .resize(300, 300)
         .toFile(path + "/" + fileName);
-    console.log("the file name and the path is ", path + "/" + fileName);
     const avatarPath = `http://localhost:3030/images/${fileName}`
 
     user.avatar = avatarPath
@@ -261,9 +230,7 @@ export const uploadAvatar = async (req, res) => {
 
 export const getJobSeekerProfile = async (req, res) => {
     try {
-        console.log("fetching job seeker");
         const userId = req.params.userId;
-        console.log("fetching job seeker1",userId);
         const user = await User.findOne({ id: userId });
         if (!user) {
             return res.status(404).send("User not found");
@@ -272,12 +239,10 @@ export const getJobSeekerProfile = async (req, res) => {
         // Use the user's _id for querying the job seeker profile
         const userObjectId = user._id;
         // Fetch the job seeker profile from the database
-        const jobSeeker = await JobSeekerProfile.findOne({ user_id: userObjectId } ).exec();
-        console.log("fetching job seeker2",jobSeeker);
+        const jobSeeker = await JobSeekerProfile.findOne({ user_id: userObjectId }).exec();
         if (!jobSeeker) {
             return res.status(404).json({ message: 'Job seeker not found' });
         }
-        console.log("fetching job seeker3");
         // Send the job seeker profile data as a response
         res.status(200).json(jobSeeker);
     } catch (error) {
@@ -374,3 +339,50 @@ export const removeFollower = async (req, res) => {
         removeUser: removeUser.following
     })
 }
+export const storeToken = async (req, res) => {
+    const { EncyptedPassword, token } = req.body;
+    console.log("userId", EncyptedPassword, "token", token)
+    if (!EncyptedPassword || !token) return res.status(400).send("User ID and token are required");
+    console.log("bjr",EncyptedPassword.id)
+    const user = await User.findOne({ id: EncyptedPassword.id });
+    if (!user) {
+        return res.status(404).send("User not found");
+    }
+    // Use the user's _id for querying the job seeker profile
+    const userId = user._id;
+    console.log("userId ", userId);
+    // Find the job seeker profile by userId
+    try {
+        // Find the user by userId
+        const user = await User.findOne({ _id :userId});
+        console.log("bjr1")
+        if (!user) return res.status(404).send("User not found");
+        console.log("bjr2")
+        // Upsert token: if a record exists, update it; otherwise, create a new one
+        await Token.findOneAndUpdate({ userId }, { token }, { upsert: true, new: true });
+        console.log("bjr3")
+        res.send("Token stored successfully");
+    } catch (error) {
+        console.error("Error storing token:", error);
+        res.status(500).send("Error storing token");
+    }
+};
+export const retrieveToken = async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).send("User ID is required");
+
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+        return res.status(404).send("User not found");
+    }
+    const userobjId = user._id
+    try {
+        // Find the token for the given userId
+        const tokenRecord = await Token.findOne({ userId: userobjId });
+        if (!tokenRecord) return res.status(404).send("Token not found");
+        res.json({ token: tokenRecord.token });
+    } catch (error) {
+        console.error("Error retrieving token:", error);
+        res.status(500).send("Error retrieving token");
+    }
+};

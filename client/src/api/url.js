@@ -16,6 +16,7 @@ export const APPLY_FOR_JOB = '/jobs/apply';
 export const UPDATE_JOB_SEEKER_PROFILE= '/update-job-seeker-profile'
 export const TOGGLE_BOOKMARK ='/toggle-bookmark'
 export const NOTIFICATIONS_GENERATE='/generate-notification'
+export const STORE_TOKEN='/store-token'
 
 /* GET */
 export const GET_HOME = "/home"

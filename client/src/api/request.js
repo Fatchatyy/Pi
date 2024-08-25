@@ -39,11 +39,9 @@ function postMethod(url, { data, token }, responseCB, loadingCB) {
         })
 }
 function postMethod1(url, { token, newPassword }, responseCB, loadingCB) {
-    console.log("we are in the post method");
     if (loadingCB) loadingCB(true);
 
     const data = { token, newPassword };
-    console.log("Sending data:", data);
 
     return axios
         .post(url, data) // Send data as JSON
@@ -59,12 +57,11 @@ function postMethod1(url, { token, newPassword }, responseCB, loadingCB) {
         });
 }
 function postMethod2(url, { token, EncyptedPassword }, responseCB, loadingCB) {
-    console.log("we are in the post method");
     if (loadingCB) loadingCB(true);
 
     const data = { token, EncyptedPassword };
-    console.log("Sending data:", data);
 
+console.log('post method2222 ', data);
     return axios
         .post(url, data) // Send data as JSON
         .then(response => {
@@ -79,11 +76,9 @@ function postMethod2(url, { token, EncyptedPassword }, responseCB, loadingCB) {
         });
 }
 function postMethod3(url, { token, email }, responseCB, loadingCB) {
-    console.log("we are in the post method");
     if (loadingCB) loadingCB(true);
 
     const data = { token, email };
-    console.log("Sending data:", data);
 
     return axios
         .post(url, data) // Send data as JSON
@@ -166,18 +161,18 @@ export const removeFollower = (...args) => {
 
 
 export const markNotificationAsRead = (notificationID, token, responseCB, loadingCB) => {
-    console.log("Marking notification as read", notificationID);
     const url = `${urls.MARK_NOTIFICATION_AS_READ}/${notificationID}`;
     
     return postMethod(url, { token }, responseCB, loadingCB);
 };
+export const storeToken = (token,EncyptedPassword ,responseCB, loadingCB)=>{
+    return postMethod2(urls.STORE_TOKEN,{token, EncyptedPassword}, responseCB, loadingCB)
+}
 export const getUserNotifications = (userID, ...args) => {
-    console.log("Fetching notifications for userID", userID);
     const url = `${urls.GET_USER_NOTIFICATIONS}/${userID}`;
     return getMethod(url, ...args);
 };
 export const generateNotifications = (userID, token, responseCB, loadingCB) => {
-    console.log("Generating notifications for userID", userID ,"and the token", token);
     const url = `${urls.NOTIFICATIONS_GENERATE}/${userID}`;
     
     return postMethod(url, { token }, responseCB, loadingCB);
@@ -194,7 +189,6 @@ export const getJobSeekerProfile = (userId, responseCB, loadingCB) => {
 };
 
 export const getUser = ({ id, username }, ...args) => {
-    console.log('we are getting the user hihihii', id , username);
     var query;
     if (id) query = `?userID=${id}`
     else if (username) query = `?username=${username}`

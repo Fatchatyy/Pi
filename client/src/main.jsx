@@ -16,8 +16,11 @@ import store from './store/index.js'
 import './assets/css/tailwind.css'
 import ForgotPasswordView from './views/ForgotPasswordView.jsx';
 import ResetPasswordView from './views/ResetPasswordView.jsx';
-
+import RedirectBasedOnRole from './components/RedirectBasedOnRole';
 import './api/request'
+import RoleSelection from './components/RoleSelection.jsx';
+import { SocketProvider } from './components/SocketContext.jsx';
+import TestSocket from './views/TestSocket.jsx';
 
 const history = createBrowserHistory({ window });
 
@@ -29,6 +32,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <HistoryRouter history={history}>
     <Provider store={store} >
+      <SocketProvider>
       <div>
         <Navbar />
         <CreatePost />
@@ -39,10 +43,15 @@ root.render(
           <Route path="/forgot-password" element={<ForgotPasswordView />} />
           <Route path="/reset-password/:token" element={<ResetPasswordView />} />
           <Route path="login" element={<Login />} />
+          <Route path="/testSocket" element = {<TestSocket />} />
           <Route path="edit" element={<EditProfile />} />
+          {/* Redirect to BackOffice for HR users */}
+          <Route path="/redirect" element={<RedirectBasedOnRole />} />
+          <Route path="/RoleSelection" element = {<RoleSelection/>}/>
         </Routes>
       </div>
-
+      </SocketProvider>
     </Provider>
+    
   </HistoryRouter>
 );

@@ -13,7 +13,9 @@ import {
     requestPasswordReset,
     resetPassword,
     updateJobSeekerProfile,
-    getJobSeekerProfile
+    getJobSeekerProfile,
+    storeToken,
+    retrieveToken
 } from '../controllers/user.controller'
 import {
     createPost,
@@ -23,7 +25,10 @@ import {
     toggleBookmark,
     getBookmarkedPosts,
     generateNotificationsForUser,
-    getNotificationsForUser
+    getNotificationsForUser,
+    getApplicants,
+    updateApplicationStatus,
+    scheduleInterview
 } from '../controllers/post.controller'
 import auth from '../middleware/auth.js'
 
@@ -50,14 +55,18 @@ router.post('/toggle-bookmark/:userId/:postId',auth, toggleBookmark);
 router.post('/generate-notification/:userId',auth,generateNotificationsForUser)
 router.post('/request-password-reset', requestPasswordReset);
 router.post('/reset-password', resetPassword);
+router.post('/store-token', storeToken);
+router.post('/update-status',updateApplicationStatus)
+router.post('/schedule-interview', scheduleInterview);
 
 
-
+router.get('/retrieve-token', retrieveToken);
 router.get("/home", getHome)
 router.get("/user", getUser)
 router.get("/get-posts", getPosts)
 router.get('/job-seeker-profile/:userId',getJobSeekerProfile);
 router.get('/bookmarked-posts/:userID', getBookmarkedPosts);
 router.get('/get-notification/:userId',getNotificationsForUser);
+router.get('/applicants',getApplicants);
 
 export default router;
