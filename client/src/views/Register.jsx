@@ -15,12 +15,26 @@ function App() {
     const [username, setUsername] = useState(null)
     const [password, setPassword] = useState(null)
     const [role, setRole] = useState('job_seeker');
+    const [errors, setErrors] = useState({});
     const [buttonStyle, setStyle] = useState({
         backgroundColor: '#B2DFFC'
     })
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    }
+    const validateForm = () => {
+        const newErrors = {};
+        if (!mail || !validateEmail(mail)) newErrors.mail = "Please enter a valid email.";
+        if (!name || name.length < 2) newErrors.name = "Name must be at least 2 characters long.";
+        if (!username || username.length < 3) newErrors.username = "Username must be at least 3 characters long.";
+        if (!password || password.length < 4) newErrors.password = "Password must be at least 6 characters long.";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
 
     useEffect(() => {
         if (username && password && name && mail) {
@@ -31,6 +45,7 @@ function App() {
     }, [username, password, name, mail])
 
     const register = async () => {
+        if (!validateForm()) return;
         let data = {
             mail,
             name,
@@ -65,10 +80,14 @@ function App() {
                                 <div className='w-full h-[1px] bg-[#DBDBDB]' ></div>
                         </div>
                         <div className='flex w-full items-center flex-col px-10 mt-3 ' >
-                            <input onInput={e => setMail(e.target.value)} type="text" className='w-full pl-2 pt-[9px] pb-[7px]  bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB] ' placeholder='Phone number or E-mail' />
+                            <input onInput={e => setMail(e.target.value)} type="text" className='w-full pl-2 pt-[9px] pb-[7px]  bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB] ' placeholder='E-mail' />
+                            {errors.mail && <span className='text-red-500 text-xs'>{errors.mail}</span>}
                             <input onInput={e => setName(e.target.value)} type="text" className='w-full pl-2 pt-[9px] pb-[7px] mt-2 bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB] ' placeholder='Name' />
+                            {errors.name && <span className='text-red-500 text-xs'>{errors.name}</span>}
                             <input onInput={e => setUsername(e.target.value)} type="text" className='w-full pl-2 pt-[9px] pb-[7px] mt-2 bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB] ' placeholder='Username' />
+                            {errors.username && <span className='text-red-500 text-xs'>{errors.username}</span>}
                             <input onInput={e => setPassword(e.target.value)} type="password" className='w-full pl-2 pt-[9px] pb-[7px] mt-2 bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB] ' placeholder='Password' />
+                            {errors.password && <span className='text-red-500 text-xs'>{errors.password}</span>}
                             <select onChange={e => setRole(e.target.value)} className='w-full pl-2 pt-[9px] pb-[7px] mt-2 bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB]'>
                             <option value="job_seeker">Job Seeker</option><option value="hr">HR</option></select>
                             <span className='text-[11px] mt-4 text-[#8E8E8E] text-center ' >Hizmetimizi kullanan kişiler senin iletişim bilgilerini Instagram'a yüklemiş olabilir. <strong>Daha Fazla Bilgi Al</strong> </span>

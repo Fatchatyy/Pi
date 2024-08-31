@@ -15,7 +15,10 @@ import {
     updateJobSeekerProfile,
     getJobSeekerProfile,
     storeToken,
-    retrieveToken
+    retrieveToken,
+    handleUserConnection,
+    handleUserDisconnection,
+    getUserSocketId
 } from '../controllers/user.controller'
 import {
     createPost,
@@ -58,6 +61,8 @@ router.post('/reset-password', resetPassword);
 router.post('/store-token', storeToken);
 router.post('/update-status',updateApplicationStatus)
 router.post('/schedule-interview', scheduleInterview);
+router.post('/userConnection',handleUserConnection);
+router.post('/userDisconnection',handleUserDisconnection);
 
 
 router.get('/retrieve-token', retrieveToken);
@@ -68,5 +73,6 @@ router.get('/job-seeker-profile/:userId',getJobSeekerProfile);
 router.get('/bookmarked-posts/:userID', getBookmarkedPosts);
 router.get('/get-notification/:userId',getNotificationsForUser);
 router.get('/applicants',getApplicants);
+router.get('/getSocketId/:userID',getUserSocketId)
 
 export default router;

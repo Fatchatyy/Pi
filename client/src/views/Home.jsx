@@ -7,18 +7,23 @@ import '../assets/css/app.css'
 import Post from '../components/Post'
 import { getHome } from '../api/request'
 import { useState } from 'react'
-
+import { useSocket } from '../components/SocketContext';
+import { handleUserConnection } from '../api/request';
 function App() {
-
+  const socket = useSocket();
   const [posts, setHome] = useState([])
   const user = useSelector(state => state.user)
   const navigate = useNavigate()
   const path = useLocation()
-
+  const sendingsocketId = async () => {
+    console.log("user logged in whats his socket id", socket.id)
+    await handleUserConnection(user.id, socket.id);
+  }
   useEffect(() => {
     if (!user.token) return navigate("/login")
     setHome([])
     getHome(setHome)
+    sendingsocketId();
   }, [path])
 
   if (user.token) return (
@@ -63,7 +68,7 @@ function App() {
         <div id='posts-section' className='mt-5 w-full pb-5' >
           {
             posts.map((post, index) => {
-              return <Post key={index} token={user.token} userI={post.user} date={post.data} content={post.content} image={post.image} userID={user.id} description={post.description} requirements={post.requirements} company={post.company} location={post.location} jobType={post.jobType} jobId={post.id} />
+              return <Post key={index} token={user.token} userI={post.user} date={post.data} content={post.content} image={post.image} userID={user.id} role={user.role}description={post.description} requirements={post.requirements} company={post.company} location={post.location} jobType={post.jobType} jobId={post.id} />
             })
           }
         </div>

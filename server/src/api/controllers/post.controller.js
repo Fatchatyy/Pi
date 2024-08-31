@@ -168,25 +168,37 @@ export const generateNotificationsForUser = async (req, res) => {
         const jobOffers = await Post.find({});
 
         // Filter job offers that match user's skills
-        const notificationss = [];
+        const notificationsToSave = [];
         for (const jobOffer of jobOffers) {
-            // Convert job offer requirements to an array if it's a string
             const requirementsArray = jobOffer.requirements.split(',').map(req => req.trim());
-            // Check if any of the user's skills match the requirements
+
             const matches = jobseeker.skills.some(skill => requirementsArray.includes(skill));
+
             if (matches) {
-                notificationss.push({
+                // Check if the notification already exists
+                const existingNotification = await notifications.findOne({
                     userID: userId,
-                    message: `Your skill matches the requirements for the job offer titled: ${jobOffer.title}`,
-                    jobOfferID: jobOffer._id
+                    jobOfferID: jobOffer._id,
+                    message: `Your skill matches the requirements for the job offer titled: ${jobOffer.title}`
                 });
+
+                // If it doesn't exist, add it to the array to be saved
+                if (!existingNotification) {
+                    notificationsToSave.push({
+                        userID: userId,
+                        message: `Your skill matches the requirements for the job offer titled: ${jobOffer.title}`,
+                        jobOfferID: jobOffer._id
+                    });
+                }
             }
         }
 
-        // Save notifications
-        await notifications.insertMany(notificationss);
+        // Save new notifications if any
+        if (notificationsToSave.length > 0) {
+            await notifications.insertMany(notificationsToSave);
+        }
 
-        return notificationss;
+        return notificationsToSave;
     } catch (error) {
         console.error('Error generating notifications:', error);
         throw error;
@@ -195,7 +207,11 @@ export const generateNotificationsForUser = async (req, res) => {
 export const getNotificationsForUser = async (req, res) => {
     try {
         const { userId } = req.params;
-        const notificationss = await notifications.find({ userId }).populate('jobOfferID');
+       
+        const userID = userId;
+        console.log("the user idis", userID);
+        const notificationss = await notifications.find({ userID }).populate('jobOfferID');
+        console.log("notifications found",notificationss)
         if (!notificationss.length) return res.status(404).json({ message: 'No notifications found' });
         return res.status(200).json(notificationss);
     } catch (error) {

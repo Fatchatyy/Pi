@@ -9,7 +9,7 @@ import defaultAvatar from '../assets/img/default_avatar.jpg';
 import { useNavigate } from 'react-router-dom';
 import { applyForJob,toggleBookmark } from '../api/request'; 
 
-function App({token,userI, date, content, image, userID, description, requirements, company, location, jobType,jobId}) {
+function App({token,userI, date, content, image, userID,role, description, requirements, company, location, jobType,jobId}) {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [isApplying, setIsApplying] = useState(false);
@@ -98,6 +98,8 @@ function App({token,userI, date, content, image, userID, description, requiremen
                     <p className="text-sm mb-4">{company}</p>
 
                     <p className="text-sm">{location}</p>
+                    {role === 'job_seeker' && (
+                        <div>
                     <button
         onClick={handleApply}
         disabled={isApplying}
@@ -107,6 +109,7 @@ function App({token,userI, date, content, image, userID, description, requiremen
       </button>
 
       {applyError && <p className='text-red-500 text-center'>{applyError}</p>}
+      </div>)}
                 </div>
             </div>
         </div>

@@ -21,6 +21,8 @@ import './api/request'
 import RoleSelection from './components/RoleSelection.jsx';
 import { SocketProvider } from './components/SocketContext.jsx';
 import TestSocket from './views/TestSocket.jsx';
+import Caller from './views/Caller.jsx';
+import Receiver from './views/Receiver.jsx';
 
 const history = createBrowserHistory({ window });
 
@@ -43,8 +45,10 @@ root.render(
           <Route path="/forgot-password" element={<ForgotPasswordView />} />
           <Route path="/reset-password/:token" element={<ResetPasswordView />} />
           <Route path="login" element={<Login />} />
-          <Route path="/testSocket" element = {<TestSocket />} />
-          <Route path="edit" element={<EditProfile />} />
+         <Route path="/testSocket" element = {<TestSocket />} /> 
+         {/* <Route path="/testSocket" element = {<Caller/>} /> */}
+        {/* <Route path="/testSocket1" element = {<Receiver/>} />   */}
+          <Route path="edit" element={<EditProfile />} /> 
           {/* Redirect to BackOffice for HR users */}
           <Route path="/redirect" element={<RedirectBasedOnRole />} />
           <Route path="/RoleSelection" element = {<RoleSelection/>}/>

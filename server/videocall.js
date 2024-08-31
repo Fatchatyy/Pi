@@ -16,6 +16,20 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
+// Relay signaling messages
+socket.on('signal', (data) => {
+
+  const { targetId, signalData } = data;
+  io.to(targetId).emit('signal', {
+    fromId: socket.id,
+    signalData,
+  });
+  if (signalData.type === 'decline') {
+    console.log("socket.id of the caller", data.targetId, "signal data type is ", signalData.type)
+    io.to(data.targetId).emit('signal', { fromId: data.targetId, signalData});
+  }
+});
+
 
   // Handle client disconnection
   socket.on('disconnect', () => {

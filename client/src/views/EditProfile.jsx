@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import defaultAvatar from '../assets/img/default_avatar.jpg'
 import { uploadAvatar, updateUser, removeAvatar, updateJobSeekerProfile } from '../api/request'
 import { loginStore, removeAvatarStore } from '../store/user'
+import Popupp from './popupp'
 
 function App() {
 
@@ -28,6 +29,16 @@ function App() {
     const [hobbies, setHobbies] = useState([]);
     const [description, setDescription] = useState('');
     const [jobType, setJobType] = useState('');
+
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    const handleOpenPopup = () => {
+        setIsPopupOpen(true);
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
 
     const removeAvatarManager = () => {
         setAlert(false)
@@ -156,9 +167,9 @@ function App() {
     }
 
     if (user.token) return (
-        <div className="w-full h-screen flex items-center justify-center pt-[110px] " >
+        <div className="w-full h-screen flex items-center justify-center  " >
             <AlertBox />
-            <div className="w-[933px] mx-auto my-auto h-[839px] bg-white border border-[#DBDBDB] flex " >
+            <div className="w-[933px] mx-auto my-auto  bg-white border border-[#DBDBDB] flex " >
                 <nav className="h-full flex flex-col border-r grow border-[#DBDBDB] " >
                     <a href="#" className="w-full py-4 leading-5 pl-[30px] pr-4  font-semibold flex items-center justify-start border-l-2 border-black" >Edit Profile</a>
                     <a href="#" className="w-full py-4 leading-5 pl-[30px] pr-4 flex items-center justify-start border-l-2 border-transparent hover:border-gray-200 hover:bg-gray-50 " >
@@ -210,12 +221,7 @@ function App() {
                                     type="text"
                                     className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
                                 />
-                                <span className='text-[#8E8E8E] text-xs max-w-[355px] !leading-4 mt-4 ' >
-                                    Help people discover your account by using a name you are known by, such as your first and last name, nickname , or business name.
-                                </span>
-                                <span className='text-[#8E8E8E] text-xs max-w-[355px] !leading-4 mt-3 ' >
-                                    You can only change your name twice in 14 days
-                                </span>
+                                
                             </div>
                         </div>
                     </div>
@@ -233,27 +239,12 @@ function App() {
                                     type="text"
                                     className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
                                 />
-                                <span className='text-[#8E8E8E] text-xs max-w-[355px] !leading-4 mt-4 ' >
-                                    In most cases , you will be able to change your username and do taiksela again within 14 days .Learn more
-                                </span>
+       
                             </div>
                         </div>
                     </div>
 
-                    <div className='mt-8 w-full' >
-                        <div className='flex items-center h-full' >
-                            <div className='min-w-[194px] flex items-start justify-start h-full ' >
-                                <span className='font-semibold ml-auto px-8 ' >Website</span>
-                            </div>
-                            <div className='flex flex-col ' >
-                                <input
-                                    placeholder='Website'
-                                    type="text"
-                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none '
-                                />
-                            </div>
-                        </div>
-                    </div>
+    
 
                     <div className='mt-5 w-full'  >
                         <div className='flex items-center h-full' >
@@ -323,183 +314,222 @@ function App() {
                             </div>
                         </div>
                     </div>
-                    {/* Add fields for job seeker profile here */}
-                    <div className='mt-5 w-full'>
-                        <div className='flex items-center h-full'>
-                            <div className='min-w-[194px] flex items-start justify-start h-full'>
-                                <span className='font-semibold ml-auto px-8'>Location</span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <input
-                                    onInput={e => setLocation(e.target.value)}
-                                    value={location}
-                                    type="text"
-                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='mt-5 w-full'>
-                        <div className='flex items-center h-full'>
-                            <div className='min-w-[194px] flex items-start justify-start h-full'>
-                                <span className='font-semibold ml-auto px-8'>School</span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <input
-                                    onInput={e => setSchool(e.target.value)}
-                                    value={school}
-                                    type="text"
-                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Add other job seeker profile fields */}
-                    <div className='mt-5 w-full'>
-                        <div className='flex items-center h-full'>
-                            <div className='min-w-[194px] flex items-start justify-start h-full'>
-                                <span className='font-semibold ml-auto px-8'>Diploma Name</span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <input
-                                    onInput={e => setDiplomaName(e.target.value)}
-                                    value={diplomaName}
-                                    type="text"
-                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h2>Skills</h2>
-                        {skills.map((skill, index) => (
-                            <div key={index}>
-                                <input
-                                    type="text"
-                                    value={skill}
-                                    onChange={(e) => updateSkill(index, e.target.value)}
-                                    placeholder={`Skill ${index + 1}`}
-                                />
-                                <button onClick={() => removeSkill(index)}>Remove</button>
-                            </div>
-                        ))}
-                        <button onClick={addSkill}>Add Skill</button>
-                    </div>
-                    <div>
-                        <h2>Projects</h2>
-                        {projects.map((project, index) => (
-                            <div key={index}>
-                                <input
-                                    type="text"
-                                    value={project.name}
-                                    onChange={(e) => updateProject(index, 'name', e.target.value)}
-                                    placeholder={`Project Name ${index + 1}`}
-                                />
-                                <textarea
-                                    value={project.description}
-                                    onChange={(e) => updateProject(index, 'description', e.target.value)}
-                                    placeholder={`Project Description ${index + 1}`}
-                                />
-                                <button onClick={() => removeProject(index)}>Remove</button>
-                            </div>
-                        ))}
-                        <button onClick={addProject}>Add Project</button>
-                    </div>
-                    <div>
-                                <h2>Hobbies</h2>
-                                {hobbies.map((hobby, index) => (
-                                    <div key={index}>
-                                        <input
-                                            type="text"
-                                            value={hobby.name}
-                                            onChange={(e) => updateHobby(index, e.target.value)}
-                                            placeholder={`Hobby ${index + 1}`}
-                                        />
-                                        <button onClick={() => removeHobby(index)}>Remove</button>
-                                    </div>
-                                ))}
-                                <button onClick={addHobby}>Add Hobby</button>
-                            </div>
-                    <div className='mt-5 w-full'>
-                        <div className='flex items-center h-full'>
-                            <div className='min-w-[194px] flex items-start justify-start h-full'>
-                                <span className='font-semibold ml-auto px-8'>Work Experience</span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <input
-                                    onInput={e => setWorkExperience(e.target.value)}
-                                    value={workExperience}
-                                    type="text"
-                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='mt-5 w-full'>
-                        <div className='flex items-center h-full'>
-                            <div className='min-w-[194px] flex items-start justify-start h-full'>
-                                <span className='font-semibold ml-auto px-8'>languages</span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <input
-                                    onInput={e => setLanguages(e.target.value)}
-                                    value={languages}
-                                    type="text"
-                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='mt-5 w-full'>
-                        <div className='flex items-center h-full'>
-                            <div className='min-w-[194px] flex items-start justify-start h-full'>
-                                <span className='font-semibold ml-auto px-8'>Description</span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <input
-                                    onInput={e => setDescription(e.target.value)}
-                                    value={description}
-                                    type="text"
-                                    className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
-                                />
-                            </div>
-                        </div>
-                        
-                    </div>
-                    <div className='mt-5 w-full'>
-                            <div className='flex items-center h-full'>
-                                <div className='min-w-[194px] flex items-start justify-start h-full'>
-                                    <span className='font-semibold ml-auto px-8'>JobType</span>
-                                </div>
-                                <div className='flex flex-col'>
-                                    <input
-                                        onInput={e => setJobType(e.target.value)}
-                                        value={jobType}
-                                        type="text"
-                                        className='border border-[#DBDBDB] h-[30px] w-[355px] px-[10px] rounded-[3px] outline-none'
-                                    />
-                                </div>
-                            </div>
-                           
-                        </div>
-
-                    <div className='mt-auto mb-8 w-full ' >
+                    <div className='mt-4 w-full ' >
                         <div className='flex items-center h-full' >
                             <div className='min-w-[194px] flex items-center justify-start h-full ' >
+                            </div>
+                            <div className='min-w-[110px] flex items-center justify-start h-full ' >
                             </div>
                             <div className='flex flex-col ' >
                                 <button onClick={updateInformation} className='w-full flex items-center px-3 justify-center bg-[#139DF7] h-[30px] rounded-[4px] ' >
                                     <span className='font-semibold text-white text-sm' >Send</span>
                                 </button>
-                                <button onClick={updateJobSeekerProfileInfo} className='mt-8 py-2 px-6 bg-green-500 text-white rounded-md'>
-                        Update Job Seeker Profile
-                    </button>
+                               
                             </div>
                         </div>
                     </div>
 
+                    {/* Add fields for job seeker profile here */}
+                    {user.role === 'job_seeker' && (
+                <div>
+                    <button
+                        onClick={handleOpenPopup}
+                        className='bg-[#139DF7] text-white px-4 py-2 rounded-md mt-6 mb-3 mr-6'
+                    >
+                        Build Your profile
+                    </button>
+
+                    <Popupp isOpen={isPopupOpen} onClose={handleClosePopup}>
+                        <h2 className='text-2xl font-bold mb-6 border-b-2 border-gray-300 pb-2'>
+                            Build Your Profile
+                        </h2>
+                        {/* The form content */}
+                        <div className='mb-4'>
+                            {/* Location */}
+                            <div className='flex items-center'>
+                                <label className='w-40 font-semibold text-gray-700'>Location</label>
+                                <input
+                                    onInput={e => setLocation(e.target.value)}
+                                    value={location}
+                                    type="text"
+                                    className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                                />
+                            </div>
+                        </div>
+                        <div className='mb-4'>
+            <div className='flex items-center'>
+                <label className='w-40 font-semibold text-gray-700'>School</label>
+                <input
+                    onInput={e => setSchool(e.target.value)}
+                    value={school}
+                    type="text"
+                    className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                />
+            </div>
+        </div>
+        <div className='mb-4'>
+            <div className='flex items-center'>
+                <label className='w-40 font-semibold text-gray-700'>Diploma Name</label>
+                <input
+                    onInput={e => setDiplomaName(e.target.value)}
+                    value={diplomaName}
+                    type="text"
+                    className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                />
+            </div>
+        </div>
+        <div className='mb-4'>
+            <h3 className='text-lg font-semibold mb-2'>Skills</h3>
+            {skills.map((skill, index) => (
+                <div key={index} className='flex items-center mb-2'>
+                    <input
+                        type="text"
+                        value={skill}
+                        onChange={(e) => updateSkill(index, e.target.value)}
+                        placeholder={`Skill ${index + 1}`}
+                        className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                    />
+                    <button
+                        onClick={() => removeSkill(index)}
+                        className='ml-2 text-red-600 hover:text-red-800'
+                    >
+                        Remove
+                    </button>
+                </div>
+            ))}
+            <button onClick={addSkill} className='text-blue-500 hover:text-blue-700'>
+                Add Skill
+            </button>
+        </div>
+
+        {/* Projects */}
+        <div className='mb-4'>
+            <h3 className='text-lg font-semibold mb-2'>Projects</h3>
+            {projects.map((project, index) => (
+                <div key={index} className='mb-4'>
+                    <input
+                        type="text"
+                        value={project.name}
+                        onChange={(e) => updateProject(index, 'name', e.target.value)}
+                        placeholder={`Project Name ${index + 1}`}
+                        className='w-full border border-gray-300 h-10 px-3 rounded-md outline-none mb-2'
+                    />
+                    <textarea
+                        value={project.description}
+                        onChange={(e) => updateProject(index, 'description', e.target.value)}
+                        placeholder={`Project Description ${index + 1}`}
+                        className='w-full border border-gray-300 h-24 px-3 rounded-md outline-none'
+                    />
+                    <button
+                        onClick={() => removeProject(index)}
+                        className='mt-2 text-red-600 hover:text-red-800'
+                    >
+                        Remove
+                    </button>
+                </div>
+            ))}
+            <button onClick={addProject} className='text-blue-500 hover:text-blue-700'>
+                Add Project
+            </button>
+        </div>
+
+        {/* Hobbies */}
+        <div className='mb-4'>
+            <h3 className='text-lg font-semibold mb-2'>Hobbies</h3>
+            {hobbies.map((hobby, index) => (
+                <div key={index} className='flex items-center mb-2'>
+                    <input
+                        type="text"
+                        value={hobby.name}
+                        onChange={(e) => updateHobby(index, e.target.value)}
+                        placeholder={`Hobby ${index + 1}`}
+                        className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                    />
+                    <button
+                        onClick={() => removeHobby(index)}
+                        className='ml-2 text-red-600 hover:text-red-800'
+                    >
+                        Remove
+                    </button>
+                </div>
+            ))}
+            <button onClick={addHobby} className='text-blue-500 hover:text-blue-700'>
+                Add Hobby
+            </button>
+        </div>
+
+        {/* Work Experience */}
+        <div className='mb-4'>
+            <div className='flex items-center'>
+                <label className='w-40 font-semibold text-gray-700'>Work Experience</label>
+                <input
+                    onInput={e => setWorkExperience(e.target.value)}
+                    value={workExperience}
+                    type="text"
+                    className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                />
+            </div>
+        </div>
+
+        {/* Languages */}
+        <div className='mb-4'>
+            <div className='flex items-center'>
+                <label className='w-40 font-semibold text-gray-700'>Languages</label>
+                <input
+                    onInput={e => setLanguages(e.target.value)}
+                    value={languages}
+                    type="text"
+                    className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                />
+            </div>
+        </div>
+
+        {/* Description */}
+        <div className='mb-4'>
+            <div className='flex items-center'>
+                <label className='w-40 font-semibold text-gray-700'>Description</label>
+                <input
+                    onInput={e => setDescription(e.target.value)}
+                    value={description}
+                    type="text"
+                    className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                />
+            </div>
+        </div>
+
+        {/* Job Type */}
+        <div className='mb-4'>
+            <div className='flex items-center'>
+                <label className='w-40 font-semibold text-gray-700'>Job Type</label>
+                <input
+                    onInput={e => setJobType(e.target.value)}
+                    value={jobType}
+                    type="text"
+                    className='flex-1 border border-gray-300 h-10 px-3 rounded-md outline-none'
+                />
+            </div>
+        </div>
+                        {/* Repeat the above structure for other fields */}
+                        {/* Skills */}
+                        {/* Projects */}
+                        {/* Hobbies */}
+                        {/* Work Experience */}
+                        {/* Languages */}
+                        {/* Description */}
+                        {/* Job Type */}
+                        {/* Update Button */}
+                        <div className='mt-8'>
+                            <button
+                                onClick={updateJobSeekerProfileInfo}
+                                className='bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600'
+                            >
+                                Update Job Seeker Profile
+                            </button>
+                        </div>
+                    </Popupp>
+                </div>
+            )}
+                    
 
                 </section>
             </div>

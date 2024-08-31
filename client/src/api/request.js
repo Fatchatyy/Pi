@@ -93,6 +93,25 @@ function postMethod3(url, { token, email }, responseCB, loadingCB) {
             return null;
         });
 }
+// Store user socket ID
+export const handleUserConnection = (userID, socketID, responseCB, loadingCB) => {
+    console.log("request , conn, userId : ", userID, "socketId :" , socketID)
+    const url = `${urls.USER_CONN}`;
+    return postMethod(url, { data: { userId: userID, socketId: socketID } }, responseCB, loadingCB);
+};
+
+// Remove user socket ID
+export const handleUserDisconnection = (userID, responseCB, loadingCB) => {
+    console.log("request, disco , userID :", userID)
+    const url = `${urls.HANDLE_USER_DISC}`;
+    return postMethod(url, { data: { userId: userID } }, responseCB, loadingCB);
+};
+
+// Fetch target user's socket ID
+export const getUserSocketId = (userID, responseCB, loadingCB) => {
+    const url = `${urls.GET_SOCKET_ID}/${userID}`;
+    return getMethod(url, responseCB, loadingCB);
+};
 
 
 

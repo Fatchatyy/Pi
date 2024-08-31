@@ -17,6 +17,8 @@ export const UPDATE_JOB_SEEKER_PROFILE= '/update-job-seeker-profile'
 export const TOGGLE_BOOKMARK ='/toggle-bookmark'
 export const NOTIFICATIONS_GENERATE='/generate-notification'
 export const STORE_TOKEN='/store-token'
+export const USER_DISC='/userDisconnection'
+export const USER_CONN= '/userConnection'
 
 /* GET */
 export const GET_HOME = "/home"
@@ -25,3 +27,4 @@ export const GET_POSTS = "/get-posts" // user id required
 export const GET_JOB_SEEKER_PROFILE= '/job-seeker-profile'
 export const GET_BOOKMARKED_POSTS='/bookmarked-posts'
 export const GET_USER_NOTIFICATIONS='/get-notification'
+export const GET_SOCKET_ID='/getSocketId'

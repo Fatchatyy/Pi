@@ -34,7 +34,9 @@ function App() {
     navigate(`/${username}`)
   }
   useEffect(() => {
+    console.log('bjrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
     if (user.token) {
+      console.log('bjrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
       if(user.role === 'job_seeker'){
       // Fetch user notifications
       const fetchNotifications = async () => {
@@ -55,6 +57,7 @@ function App() {
       // Generate notifications (optional, depending on your use case)
       const generateUserNotifications = async () => {
         try {
+          console.log("generating notif")
           await generateNotifications(user.id, user.token);
           // Optionally, refetch notifications after generating
          
@@ -121,28 +124,29 @@ function App() {
       onClick={() => setShowNotifications(prev => !prev)}
     />
     {showNotifications && (
-      <div className='absolute right-0 top-8 bg-white border border-gray-200 shadow-lg rounded w-[250px] py-2'>
-        {loading ? (
-          <div className='px-4 py-2'>
-            <span>Loading...</span>
-          </div>
-        ) : notifications.length > 0 ? (
-          notifications.map(notification => (
-            <div
-              key={notification.id}
-              className='px-4 py-2 border-b last:border-b-0 cursor-pointer'
-              onClick={() => handleNotificationClick(notification.jobOfferID)}
-            >
-              <span>{notification.message}</span>
-            </div>
-          ))
-        ) : (
-          <div className='px-4 py-2'>
-            <span>No notifications</span>
-          </div>
-        )}
+  <div className='absolute right-0 top-8 bg-white border border-gray-200 shadow-lg rounded w-[250px] py-2 max-h-80 overflow-y-auto'>
+    {loading ? (
+      <div className='px-4 py-2'>
+        <span>Loading...</span>
+      </div>
+    ) : notifications.length > 0 ? (
+      notifications.map(notification => (
+        <div
+          key={notification.id}
+          className='px-4 py-2 border-b last:border-b-0 cursor-pointer'
+          onClick={() => handleNotificationClick(notification.jobOfferID)}
+        >
+          <span>Your skills match this Job Offer</span>
+        </div>
+      ))
+    ) : (
+      <div className='px-4 py-2'>
+        <span>No notifications</span>
       </div>
     )}
+  </div>
+)}
+
   </div>
 )}
 

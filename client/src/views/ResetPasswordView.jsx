@@ -7,8 +7,30 @@ import instagramText from '../assets/img/instagram-text.png';
 const ResetPasswordView = () => {
     const { token } = useParams(); // Use useParams to get the token from the URL
     const [newPassword, setNewPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const validatePassword = (password) => {
+        // Define your password validation criteria here
+        const minLength = 4;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        if (password.length < minLength) return `Password must be at least ${minLength} characters long.`;
+        if (!hasNumber) return 'Password must contain at least one number.';
+
+        
+        return ''; // Return an empty string if validation passes
+    };
 
     const handleSubmit = async () => {
+        const validationError = validatePassword(newPassword);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+
         try {
             const encryptedPassword = encrypt(newPassword);
             await resetPassword(token, encryptedPassword);
@@ -31,9 +53,17 @@ const ResetPasswordView = () => {
                             type="password"
                             placeholder="Enter new password"
                             value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
+                            onChange={(e) => {
+                                setNewPassword(e.target.value);
+                                setError(''); // Clear error message on input change
+                            }}
                             className='w-full pl-2 pt-[9px] pb-[7px] bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB]'
                         />
+                        {error && (
+                            <div className='text-red-600 text-sm mt-2'>
+                                {error}
+                            </div>
+                        )}
                         <button
                             onClick={handleSubmit}
                             className='w-full flex items-center mt-4 justify-center h-[30px] rounded-[4px] bg-[#0095F6] text-white font-semibold text-sm'

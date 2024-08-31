@@ -55,27 +55,61 @@ function App() {
         }
 
     }, [username, password])
+    const validateEmail = email => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return emailRegex.test(email)
+    }
+
+    const validatePassword = password => {
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/
+        return passwordRegex.test(password)
+    }
 
     const login = async () => {
         if (!username || !password) return;
+    
+        if (!validateEmail(username)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+    
+        if (!validatePassword(password)) {
+            alert("Password must contain letters and at least one number.");
+            return;
+        }
     
         const data = {
             username: encrypt(username),
             password: encrypt(password)
         };
     
-        loginUser({ data }, response => {
-            dispatch(loginStore(response));
-
-            // Check the role from the response
-            if (response.role === 'hr') {
-                // Redirect to /redirect for HR users
-                navigate('/RoleSelection');
-            } else {
-                // Redirect to the default route for other users
-                navigate('/');
-            }
-        });
+        try {
+            loginUser({ data }, response => {
+                if (response === "Incorrect password") {
+                    alert("Incorrect password. Please try again.");
+                    return;
+                }
+    
+                if (response === "User not found") {
+                    alert("User not found. Please check your email address.");
+                    return;
+                }
+    
+                dispatch(loginStore(response));
+    
+                // Check the role from the response
+                if (response.role === 'hr') {
+                    // Redirect to /redirect for HR users
+                    navigate('/RoleSelection');
+                } else {
+                    // Redirect to the default route for other users
+                    navigate('/');
+                }
+            });
+        } catch (error) {
+            console.error("Login error:", error);
+            alert("An error occurred during login. Please try again.");
+        }
     };
 
 
@@ -98,7 +132,7 @@ function App() {
                                 onInput={e => setUsername(e.target.value)} 
                                 type="text" 
                                 className='w-full pl-2 pt-[9px] pb-[7px] bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB] ' 
-                                placeholder='Phone number , Username , or E-mail' />
+                                placeholder=' E-mail' />
                             <input 
                                 onInput={e => setPassword(e.target.value)} 
                                 onKeyUp={e => e.key == 'Enter' ? login() : false}
@@ -114,8 +148,7 @@ function App() {
                                 <div className='w-full h-[1px] bg-[#DBDBDB]' ></div>
                             </div>
                             <span className='text-[#3E5995] tex-xs font-semibold mt-6 ' >Login with facebook</span>
-                            <span className='text-xs mt-5 text-[#00376B] ' >Forgot your password?</span>
-                            <Link to='/forgot-password' className='font-semibold text-[#3195F6] ' >Forgot your password?</Link>
+                            <Link to='/forgot-password'  ><span className='text-xs mt-5 text-[#00376B] ' >Forgot your password?</span></Link>
                         </div>
                     </div>
 

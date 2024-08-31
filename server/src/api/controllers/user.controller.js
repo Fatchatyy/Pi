@@ -13,11 +13,39 @@ import JobSeekerProfile from '../../models/jobSeekerProfile.js';
 
 dotenv.config();
 const mg = mailgun({
-    apiKey: '813582bf9d1f8bcb6376532f85c0895c-911539ec-ad3798a8', // Replace with your Mailgun API key
-    domain: 'sandboxc99600edc0b545439e6875e78cea56ef.mailgun.org' // Replace with your Mailgun domain
+    apiKey: '', // Replace with your Mailgun API key
+    domain: '' // Replace with your Mailgun domain
 });
-
+let userSocketMap = {}; // In-memory store for user-socket mappings
 /* USER ENDPOINTS */
+
+
+// When a user connects
+export const handleUserConnection = async (req, res) => {
+  const { userId, socketId } = req.body; // User ID obtained when user logs in
+
+  userSocketMap[userId] = socketId;
+  console.log('all the socket id now', userSocketMap);
+  res.status(200).send({ success: true });
+};
+export const getUserSocketId = async (req, res) => {
+    const { userID } = req.params;
+    const socketId = userSocketMap[userID];
+    console.log("reqparams", req.params)
+    if (socketId) {
+      res.status(200).send({ socketId });
+    } else {
+      res.status(404).send({ error: 'User not found' });
+    }
+  };
+
+// When a user disconnects
+export const handleUserDisconnection = async (req, res) => {
+  const { userId } = req.body;
+  
+  delete userSocketMap[userId];
+  res.status(200).send({ success: true });
+};
 
 // Generate a password reset token and send it via email
 export const requestPasswordReset = async (req, res) => {
@@ -25,7 +53,7 @@ export const requestPasswordReset = async (req, res) => {
     const { token, email } = req.body;
     if (!email) return res.status(400).send("Email is required");
     const user = await User.findOne({ mail: email });
-    if (!user) return res.status(404).send("User not found");
+    if (!user) return res.status(200).send("User not found");
     const resetToken = crypto.randomBytes(20).toString('hex');
     user.resetToken = resetToken;
     user.resetTokenExpires = Date.now() + 3600000; // 1 hour
@@ -89,16 +117,16 @@ export const login = async (req, res) => {
 
     const { username, password } = req.body
 
-    if (!username || !password) return res.status(400).send("Bad field")
+    if (!username || !password) return res.status(200).send("Bad field")
 
     const dUsername = decrypt(username)
     const dPassword = decrypt(password)
 
     const user = await User.findOne({ mail: dUsername })
 
-    if (!user) return res.status(404).send("User not found")
+    if (!user) return res.status(200).send("User not found")
     if (dPassword !== decrypt(user.password))
-        return res.status(401).send('Invalid auth')
+        return res.status(200).send('Incorrect password')
     let token = createToken(user)
     user.token = token
     user.password = null

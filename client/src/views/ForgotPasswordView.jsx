@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
-import { requestPasswordReset } from '../api/request'
-import instagramText from '../assets/img/instagram-text.png'
-import { Link,useNavigate } from 'react-router-dom';
+import { requestPasswordReset } from '../api/request';
+import instagramText from '../assets/img/instagram-text.png';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ForgotPasswordView = () => {
     const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    const isValidEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    };
+
     const handleSubmit = async () => {
+        if (!isValidEmail(email)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+        setError(''); // Clear any previous errors
+
         try {
-            await requestPasswordReset(email);
+           const response=  await requestPasswordReset(email);
+           
+           if (response === "User not found") {
+            setError('User not found');
+            return;
+            }
             alert('Password reset link sent to your email');
-              
+    
         } catch (error) {
             console.error('Error details:', error.message);  // Log the error message
             console.error('Stack trace:', error.stack);       // Log the stack trace if available
@@ -33,6 +50,7 @@ const ForgotPasswordView = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             className='w-full pl-2 pt-[9px] pb-[7px] bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB]'
                         />
+                        {error && <p className='text-red-500 text-xs mt-2'>{error}</p>}
                         <button
                             onClick={handleSubmit}
                             className='w-full flex items-center mt-4 justify-center h-[30px] rounded-[4px] bg-[#0095F6] text-white font-semibold text-sm'
