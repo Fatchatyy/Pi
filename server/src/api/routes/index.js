@@ -31,7 +31,8 @@ import {
     getNotificationsForUser,
     getApplicants,
     updateApplicationStatus,
-    scheduleInterview
+    scheduleInterview,
+    generateAuthUrl,handleAuthCallback,createEvent
 } from '../controllers/post.controller'
 import auth from '../middleware/auth.js'
 
@@ -74,5 +75,8 @@ router.get('/bookmarked-posts/:userID', getBookmarkedPosts);
 router.get('/get-notification/:userId',getNotificationsForUser);
 router.get('/applicants',getApplicants);
 router.get('/getSocketId/:userID',getUserSocketId)
+router.get('/auth', generateAuthUrl);
+router.get('/auth/callback', handleAuthCallback);
+router.post('/create-event', createEvent);
 
 export default router;
