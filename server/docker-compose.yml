@@ -1,0 +1,19 @@
+version: '3'
+services:
+  server:
+    build: .
+    ports:
+      - "3030:3030"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/opportunity
+      - FILE_STORAGE=/app/src/images
+      - secretKey=very secret key
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - .:/app
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
