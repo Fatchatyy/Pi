@@ -163,6 +163,7 @@ export const updateUser = (...args) => {
 }
 
 export const followUser = (...args) => {
+   
     return postMethod(urls.FOLLOW_USER, ...args)
 }
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { resetPassword } from '../api/request';
 import encrypt from '../utils/encrypt'
+import instaJob from '../assets/img/mylogo.png'
 import instagramText from '../assets/img/instagram-text.png';
 
 const ResetPasswordView = () => {
@@ -46,7 +47,7 @@ const ResetPasswordView = () => {
         <div className="w-full h-screen relative bg-[#FAFAFA] pb-[130px] flex items-center justify-center">
             <div className="w-[350px] min-h-[400px]">
                 <div className="w-[348px] py-[10px] flex flex-col items-center border border-[#DBDBDB] relative pb-10 rounded-[1px] bg-white">
-                    <img src={instagramText} className='mt-3' width="175" />
+                    <img src={instaJob} className='mt-5 mb-5' width="175" />
                     <span className='font-semibold text-[#8E8E8E] leading-5'>Reset Your Password</span>
                     <div className='w-full px-10 mt-4'>
                         <input

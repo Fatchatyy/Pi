@@ -1,7 +1,8 @@
 version: '3'
 services:
   server:
-    build: .
+    build:
+      context: ./server
     ports:
       - "3030:3030"
     environment:
@@ -10,7 +11,7 @@ services:
       - secretKey=very secret key
       - FRONTEND_URL=http://localhost:3000
     volumes:
-      - .:/app
+      - ./server:/app
     depends_on:
       - mongodb
   mongodb:

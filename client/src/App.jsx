@@ -79,12 +79,12 @@ function App() {
                 <span className='text-sm text-[#A2A2A2] ' >Tarık Sefa</span>
               </div>
             </div>
-            <button className='text-[#139DF7] text-xs font-semibold'  >Geçiş Yap</button>
+            <button className='text-[#139DF7] text-xs font-semibold'  >Switch</button>
           </div>
 
           <div className='w-full flex items-center justify-between mt-4' >
-            <span className='text-[#ACACAC] font-semibold text-sm' >Senin İçin Öneriler</span>
-            <span className='text-xs  font-semibold' >Tümünü Gör</span>
+            <span className='text-[#ACACAC] font-semibold text-sm' >Suggestions for you</span>
+            <span className='text-xs  font-semibold' >See all</span>
           </div>
 
           <div className='flex items-center flex-col w-[340px] mt-1' >

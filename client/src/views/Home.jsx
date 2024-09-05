@@ -35,32 +35,32 @@ function App() {
 
           <div className='flex items-center flex-col mt-2 ' >
             <img src={me} width='52' className='rounded-full' />
-            <span className='text-xs mt-3 ' >gosmac</span>
+            <span className='text-xs mt-3 ' >story</span>
           </div>
 
           <div className='flex items-center flex-col mt-2 ' >
             <img src={me} width='52' className='rounded-full' />
-            <span className='text-xs mt-3 ' >gosmac</span>
+            <span className='text-xs mt-3 ' >story</span>
           </div>
 
           <div className='flex items-center flex-col mt-2 ' >
             <img src={me} width='52' className='rounded-full' />
-            <span className='text-xs mt-3 ' >gosmac</span>
+            <span className='text-xs mt-3 ' >story</span>
           </div>
 
           <div className='flex items-center flex-col mt-2 ' >
             <img src={me} width='52' className='rounded-full' />
-            <span className='text-xs mt-3 ' >gosmac</span>
+            <span className='text-xs mt-3 ' >story</span>
           </div>
 
           <div className='flex items-center flex-col mt-2 ' >
             <img src={me} width='52' className='rounded-full' />
-            <span className='text-xs mt-3 ' >gosmac</span>
+            <span className='text-xs mt-3 ' >story</span>
           </div>
 
           <div className='flex items-center flex-col mt-2 ' >
             <img src={me} width='52' className='rounded-full' />
-            <span className='text-xs mt-3 ' >gosmac</span>
+            <span className='text-xs mt-3 ' >story</span>
           </div>
 
 
@@ -85,12 +85,12 @@ function App() {
               <span className='text-sm text-[#A2A2A2] ' > {user.name} </span>
             </div>
           </div>
-          <button className='text-[#139DF7] text-xs font-semibold'  >Geçiş Yap</button>
+          <button className='text-[#139DF7] text-xs font-semibold'  >Switch</button>
         </div>
 
         <div className='w-full flex items-center justify-between mt-4' >
-          <span className='text-[#ACACAC] font-semibold text-sm' >Senin İçin Öneriler</span>
-          <span className='text-xs  font-semibold' >Tümünü Gör</span>
+          <span className='text-[#ACACAC] font-semibold text-sm' >Suggestions for you</span>
+          <span className='text-xs  font-semibold' >See All</span>
         </div>
 
         <div className='flex items-center flex-col w-[340px] mt-1' >
@@ -100,43 +100,43 @@ function App() {
               <img src={me} className='rounded-full' width="32" />
               <div className='flex flex-col items-start' >
                 <span className='text-sm font-semibold' >Fat7i</span>
-                <span className='text-xs  text-[#A2A2A2]' >Seni Takip Ediyor</span>
+                <span className='text-xs  text-[#A2A2A2]' >is following you</span>
               </div>
             </div>
-            <span className='text-[#139DF7] text-xs font-semibold mr-3' > Takip Et</span>
+            <span className='text-[#139DF7] text-xs font-semibold mr-3' >Follow</span>
           </div>
 
           <div className='flex items-center justify-between px-4 py-2 w-full' >
             <div className='flex items-center justify-center gap-4' >
               <img src={me} className='rounded-full' width="32" />
               <div className='flex flex-col items-start' >
-                <span className='text-sm font-semibold' >tariksefa0</span>
-                <span className='text-xs  text-[#A2A2A2]' >Seni Takip Ediyor</span>
+                <span className='text-sm font-semibold' >tarik</span>
+                <span className='text-xs  text-[#A2A2A2]' >is following you</span>
               </div>
             </div>
-            <span className='text-[#139DF7] text-xs font-semibold mr-3' > Takip Et</span>
+            <span className='text-[#139DF7] text-xs font-semibold mr-3' > Follow</span>
           </div>
 
           <div className='flex items-center justify-between px-4 py-2 w-full' >
             <div className='flex items-center justify-center gap-4' >
               <img src={me} className='rounded-full' width="32" />
               <div className='flex flex-col items-start' >
-                <span className='text-sm font-semibold' >tariksefa0</span>
-                <span className='text-xs  text-[#A2A2A2]' >Seni Takip Ediyor</span>
+                <span className='text-sm font-semibold' >tarik</span>
+                <span className='text-xs  text-[#A2A2A2]' >is following you</span>
               </div>
             </div>
-            <span className='text-[#139DF7] text-xs font-semibold mr-3' > Takip Et</span>
+            <span className='text-[#139DF7] text-xs font-semibold mr-3' > Follow</span>
           </div>
 
           <div className='flex items-center justify-between px-4 py-2 w-full' >
             <div className='flex items-center justify-center gap-4' >
               <img src={me} className='rounded-full' width="32" />
               <div className='flex flex-col items-start' >
-                <span className='text-sm font-semibold' >tariksefa0</span>
-                <span className='text-xs  text-[#A2A2A2]' >Seni Takip Ediyor</span>
+                <span className='text-sm font-semibold' >tarik</span>
+                <span className='text-xs  text-[#A2A2A2]' >is following you</span>
               </div>
             </div>
-            <span className='text-[#139DF7] text-xs font-semibold mr-3' > Takip Et</span>
+            <span className='text-[#139DF7] text-xs font-semibold mr-3' >Follow</span>
           </div>
 
         </div>

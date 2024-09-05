@@ -1,4 +1,5 @@
 import instagramText from '../assets/img/instagram-text.png'
+import instaJob from '../assets/img/mylogo.png'
 import appStore from '../assets/img/appstore.png'
 import playStore from '../assets/img/playstore.png'
 import homeImage from '../assets/img/home.png'
@@ -115,7 +116,7 @@ function App() {
 
     return (
         <div className="w-full h-screen relative bg-[#FAFAFA] pb-[145px] " >
-            <div className="w-full h-full flex items-center justify-center mx-auto  " >
+            <div className="w-full h-full flex items-center justify-center mx-auto mt-8 " >
 
 
                 <div className='relative' >
@@ -123,10 +124,10 @@ function App() {
                     <img id='slider' src={slider} className='absolute right-[60px] top-[50px] img-animation-in img-animation-out ' />
                 </div>
 
-                <div className="w-[350px] min-h-[581px] md:mr-12  " >
+                <div className="w-[350px] min-h-[581px] md:mr-12  mt-28" >
 
                     <div className="w-[348px] py-[10px] pb-5 flex flex-col items-center border border-[#DBDBDB] relative bg-white rounded-[1px] " >
-                        <img src={instagramText} className='mt-3' width="175" />
+                        <img src={instaJob} className='mt-5 mb-5' width="175" />
                         <div className='flex w-full items-center flex-col px-10 mt-3 ' >
                             <input 
                                 onInput={e => setUsername(e.target.value)} 
@@ -159,12 +160,7 @@ function App() {
                         </div>
                     </div>
 
-                    <span className='text-sm mt-4 w-full text-center block' >Download the app.</span>
-
-                    <div className='flex items-center w-full justify-center gap-2 mt-5 ' >
-                        <img src={appStore} width='136' />
-                        <img src={playStore} width='136' />
-                    </div>
+                   
 
                 </div>
             </div>

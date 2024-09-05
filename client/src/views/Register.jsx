@@ -1,4 +1,5 @@
 import instagramText from '../assets/img/instagram-text.png'
+import instaJob from '../assets/img/mylogo.png'
 import appStore from '../assets/img/appstore.png'
 import playStore from '../assets/img/playstore.png'
 import { Link, useNavigate } from 'react-router-dom'
@@ -62,14 +63,14 @@ function App() {
 
 
     return (
-        <div className="w-full h-screen relative bg-[#FAFAFA] pb-[130px] " >
+        <div className="w-full h-screen relative bg-[#FAFAFA] pb-[130px] mt-16 " >
             <div className="w-full h-full flex items-center justify-center mx-auto  " >
 
                 <div className="w-[350px] min-h-[581px]" >
 
                     <div className="w-[348px] py-[10px] flex flex-col items-center border border-[#DBDBDB] relative pb-10 rounded-[1px] bg-white " >
-                        <img src={instagramText} className='mt-3' width="175" />
-                        <span className='font-semibold text-[#8E8E8E] leading-5 ' >Sing up to find  </span>
+                        <img src={instaJob} className='mt-3' width="150" />
+                        <span className='font-semibold text-[#8E8E8E] leading-5 mt-7' >Sing up to find  </span>
                         <span className='font-semibold text-[#8E8E8E] leading-5 ' >Professional Opportunities</span>
                         <div className='px-10 w-full relative mt-2 ' >
                             <button className='bg-[#0095F6] py-[5px] rounded-[4px] text-white w-full text-sm font-semibold ' >Login with facebook</button>
@@ -90,7 +91,7 @@ function App() {
                             {errors.password && <span className='text-red-500 text-xs'>{errors.password}</span>}
                             <select onChange={e => setRole(e.target.value)} className='w-full pl-2 pt-[9px] pb-[7px] mt-2 bg-[#FAFAFA] outline-none placeholder-[#8E8E8E] text-[12px] border border-[#DBDBDB]'>
                             <option value="job_seeker">Job Seeker</option><option value="hr">HR</option></select>
-                            <span className='text-[11px] mt-4 text-[#8E8E8E] text-center ' >Hizmetimizi kullanan kişiler senin iletişim bilgilerini Instagram'a yüklemiş olabilir. <strong>Daha Fazla Bilgi Al</strong> </span>
+                            <span className='text-[11px] mt-4 text-[#8E8E8E] text-center ' >People who are using our service may collect your <strong>Contact Information</strong> </span>
                             <span className='text-[11px] mt-4 text-[#8E8E8E] text-center ' >By signing up , you agree to our Terms , Privacy Policy and Cookies Policy</span>
                             <button style={buttonStyle} onClick={register} className='w-full flex items-center mt-4 justify-center h-[30px] rounded-[4px] ' >
                                 <span className='font-semibold text-white text-sm' >Sign up</span>
@@ -105,12 +106,7 @@ function App() {
                         </div>
                     </div>
 
-                    <span className='text-sm mt-4 w-full text-center block' >Download The App</span>
-
-                    <div className='flex items-center w-full justify-center gap-2 mt-5 ' >
-                        <img src={appStore} width='136' />
-                        <img src={playStore} width='136' />
-                    </div>
+                  
 
                 </div>
             </div>

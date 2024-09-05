@@ -28,6 +28,8 @@ function Profile() {
     const [showFollowersBox, setFollowersBox] = useState(false)
     const [showFollowingBox, setFollowingBox] = useState(false)
     const [viewMode, setViewMode] = useState('info');
+    const [CallerUser, setCallerUser] = useState();
+    const [callAccepted, setcallAccepted] = useState(true);
     const currentUser = useSelector(state => state.user)
     const path = useParams()
     const dispatch = useDispatch()
@@ -80,16 +82,18 @@ function Profile() {
     useEffect(() => {
         if (socket) {
             socket.on('signal', async (data) => {
-                const { signalData, fromId } = data;
+                const { signalData, fromId, called } = data;
 
                 try {
                     if (signalData.type === 'offer') {
                         setIncomingCall(true);
                         setCallerId(fromId);
+                        setCallerUser(called);
+                        console.log('from?', fromId, "the signalDaata does it contain anything we need ?", called);
                         await initializePeerConnection();
                         await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(signalData));
                         setShowIncomingCallPopup(true);
-                        console.log("showIncomingCallPopup",showIncomingCallPopup)
+                        console.log("showIncomingCallPopup", showIncomingCallPopup)
                     } else if (signalData.type === 'answer') {
                         await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(signalData));
 
@@ -131,16 +135,20 @@ function Profile() {
     }, [socket, callerId]);
     const startCall = async () => {
         setShowCallingPopup(true);
-        //setCallDeclined(false);
+        setCallDeclined(null);
+
         await initializePeerConnection();
+
+        console.log("calldeclined or no", callAccepted)
 
         const offer = await peerConnectionRef.current.createOffer();
         await peerConnectionRef.current.setLocalDescription(offer);
-        socket.emit('signal', { targetId, signalData: offer });
+        socket.emit('signal', { targetId, signalData: offer, called: currentUser });
     };
     const acceptCall = async () => {
         //setShowIncomingCallPopup(false);
-
+        setcallAccepted(false)
+        console.log("calldeclined or no", callAccepted)
         try {
             if (peerConnectionRef.current.signalingState === 'have-remote-offer') {
                 const answer = await peerConnectionRef.current.createAnswer();
@@ -163,6 +171,8 @@ function Profile() {
     };
     const declineCall = () => {
         setShowIncomingCallPopup(false);
+        console.log("calldeclined or no", callAccepted)
+        setcallAccepted(true);
         console.log('declining call from callerId', callerId);
         socket.emit('signal', { targetId: callerId, signalData: { type: 'decline' } });
     };
@@ -193,7 +203,7 @@ function Profile() {
         let response = await getUser({ username: path.username }, response => {
             setUser(response)
 
-
+            console.log("who is this user", response);
 
             setFollowers(response.followers)
             setFollowing(response.following)
@@ -204,6 +214,7 @@ function Profile() {
             getPosts(response.id, setPosts, setLoading)
         }
         if (response.role === 'job_seeker') {
+            getPosts(response.id, setPosts, setLoading)
             getJobSeekerProfile(response.id, setJobSeekerProfile, setLoading)
             getBookmarkedPosts(response.id, setBookmarkedPosts, setLoading);
 
@@ -238,7 +249,7 @@ function Profile() {
                     <span className='font-semibold text-sm'  >Edit Profile</span>
                 </Link>
                 <BsGearWide size={25} />
-                
+
             </div>
         )
 
@@ -320,15 +331,15 @@ function Profile() {
 
             <div className='h-[60px] w-3' ></div>
             <main className='md:pt-[30px]' >
-            
+
                 <div className='md:w-[975px] mx-auto flex items-center flex-col justify-center px-5 mt-3 ' >
-                
+
                     <section id='user-information' className='w-full h-[150px] relative flex items-start gap-5 md:gap-0 md:justify-between overflow-hidden' >
-                    
+
                         <div className='flex items-center justify-center md:min-w-[328px] ' >
                             <img src={user.avatar ?? defaultAvatar} className="rounded-full md:mr-[30px] w-[77px] md:w-[150px]  " />
                         </div>
-                        
+
 
                         <div className='h-full md:grow md:w-full flex items-start flex-col' >
                             <UserComponent />
@@ -348,39 +359,110 @@ function Profile() {
                             </div>
                             <span className='font-semibold mt-4' > {user.name} </span>
                             <span>{user.biography}</span>
-                            
+
                         </div>
                     </section>
-                    <div>
-                    <button onClick={startCall}>Start Call</button>
+                    <div className="p-4 space-y-4">
+                        <button
+                            onClick={startCall}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Start Call
+                        </button>
                         {showCallingPopup && (
                             <Popup isOpen={showCallingPopup} onClose={() => setShowCallingPopup(false)}>
-                                <h2>Calling {targetId}</h2>
-                                {callDeclined && <p>Call was declined by the user.</p>}
-                                <div>
-                                    <h3>Local Video</h3>
-                                    <video autoPlay muted playsInline ref={(video) => video && localStream && (video.srcObject = localStream)} />
-                                </div>
-                                <div>
-                                    <h2>Remote Video</h2>
-                                    <video autoPlay playsInline ref={(video) => video && remoteStream && (video.srcObject = remoteStream)} />
-                                </div>
+                                <div className="flex flex-col items-center space-y-4 p-6">
+                                    <img
+                                        src={user.avatar ?? defaultAvatar}
+                                        alt="Calling..."
+                                        className="w-24 h-24 rounded-full shadow-lg"
+                                    />
+                                    <h2>Calling {user.username}</h2>
+                                    {callDeclined && (
+                                        <p className="text-red-500">Call declined.</p>
+                                    )}
+                                    <div className="space-y-2 w-full">
+                                        <h3 className="text-lg font-medium">Preview</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <video
+                                                className="rounded"
+                                                autoPlay
+                                                muted
+                                                playsInline
+                                                ref={(video) =>
+                                                    video && localStream && (video.srcObject = localStream)
+                                                }
+                                            />
+                                            {!callDeclined && (<video
+                                                className="rounded"
+                                                autoPlay
+                                                playsInline
+                                                ref={(video) =>
+                                                    video && remoteStream && (video.srcObject = remoteStream)
+                                                }
+                                            />)}
+                                        </div>
+                                    </div>
 
+
+                                    <button
+                                        onClick={() => setShowCallingPopup(false)}
+                                        className="px-6 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                                    >
+                                        Cancel Call
+                                    </button>
+                                </div>
                             </Popup>
                         )}
 
                         {showIncomingCallPopup && (
                             <Popup isOpen={showIncomingCallPopup} onClose={() => setShowIncomingCallPopup(false)}>
-                                <h2>Incoming call from {callerId}</h2>
-                                <button onClick={acceptCall}>Accept Call</button>
-                                <button onClick={declineCall}>Decline Call</button>
-                                <div>
-                                    <h3>Local Video</h3>
-                                    <video autoPlay muted playsInline ref={(video) => video && localStream && (video.srcObject = localStream)} />
-                                </div>
-                                <div>
-                                    <h2>Remote Video</h2>
-                                    <video autoPlay playsInline ref={(video) => video && remoteStream && (video.srcObject = remoteStream)} />
+                                <div className="flex flex-col items-center space-y-4 p-6">
+                                    <img
+                                        src={CallerUser.avatar ?? defaultAvatar}
+                                        alt="Incoming Call"
+                                        className="w-24 h-24 rounded-full shadow-lg"
+                                    />
+                                    {callAccepted && (<h2>Incoming call from {CallerUser.username}</h2>)}
+
+                                    <div className="space-y-2 w-full">
+                                        <h3 className="text-lg font-medium">Preview</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <video
+                                                className="rounded"
+                                                autoPlay
+                                                muted
+                                                playsInline
+                                                ref={(video) =>
+                                                    video && localStream && (video.srcObject = localStream)
+                                                }
+                                            />
+                                            <video
+                                                className="rounded"
+                                                autoPlay
+                                                playsInline
+                                                ref={(video) =>
+                                                    video && remoteStream && (video.srcObject = remoteStream)
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row items-center space-y-4 p-6">
+                                        {callAccepted && (
+
+                                            <button
+                                                onClick={acceptCall}
+                                                className="px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+                                            >
+                                                Accept
+                                            </button>)}
+                                        <button
+                                            onClick={declineCall}
+                                            className="px-6 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                                        >
+                                            Decline
+                                        </button>
+                                    </div>
                                 </div>
                             </Popup>
                         )}

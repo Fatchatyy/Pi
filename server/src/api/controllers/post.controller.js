@@ -244,9 +244,9 @@ export const generateNotificationsForUser = async (req, res) => {
         const notificationsToSave = [];
         for (const jobOffer of jobOffers) {
             const requirementsArray = jobOffer.requirements.split(',').map(req => req.trim());
-
+            console.log("requirmeent array",requirementsArray)
             const matches = jobseeker.skills.some(skill => requirementsArray.includes(skill));
-
+            console.log("matches or no", matches);
             if (matches) {
                 // Check if the notification already exists
                 const existingNotification = await notifications.findOne({
@@ -254,7 +254,7 @@ export const generateNotificationsForUser = async (req, res) => {
                     jobOfferID: jobOffer._id,
                     message: `Your skill matches the requirements for the job offer titled: ${jobOffer.title}`
                 });
-
+                console.log("exits notif or no? ", existingNotification)
                 // If it doesn't exist, add it to the array to be saved
                 if (!existingNotification) {
                     notificationsToSave.push({
@@ -263,6 +263,7 @@ export const generateNotificationsForUser = async (req, res) => {
                         jobOfferID: jobOffer._id
                     });
                 }
+                console.log('not existing this notif has been added ', existingNotification)
             }
         }
 

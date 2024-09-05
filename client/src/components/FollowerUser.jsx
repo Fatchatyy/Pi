@@ -41,7 +41,7 @@ function App({ id, self, mode }) {
 
         if (self && mode == 'followers') return (
             <button onClick={removeManager} className='border border-[#DBDBDB] flex items-center justify-center px-2 py-1 rounded ' >
-                <span className='text-sm font-semibold' >Çıkar</span>
+                <span className='text-sm font-semibold' >Remove</span>
             </button>
         )
 

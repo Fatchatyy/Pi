@@ -23,6 +23,7 @@ function App({ user, followers, setFollowers }) {
             followToID: user.id
         }
         followUser({ data: data, token: currentUser.token }, response => {
+            console.log("the toekn", token);
             setFollowers(response.followTo)
             dispatch(updateFollowing(response.user))
         })
@@ -30,7 +31,7 @@ function App({ user, followers, setFollowers }) {
 
     if (followers.includes(currentUser.id)) return (
         <button onClick={unfollowManager} className='border-[#DBDBDB] border rounded px-[20px] py-[2px] ' >
-            <span className='font-semibold text-sm'  >Takiptesin</span>
+            <span className='font-semibold text-sm'  >following</span>
         </button>
     )
 

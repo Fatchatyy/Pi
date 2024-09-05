@@ -5,10 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -r esm src/app.js",
-    "start": "node -r esm src/app.js",
-    "test": "mocha"
+    "start": "node -r esm src/app.js"
   },
-  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",

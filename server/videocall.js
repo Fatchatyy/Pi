@@ -19,10 +19,11 @@ io.on('connection', (socket) => {
 // Relay signaling messages
 socket.on('signal', (data) => {
 
-  const { targetId, signalData } = data;
+  const { targetId, signalData, called } = data;
   io.to(targetId).emit('signal', {
     fromId: socket.id,
     signalData,
+    called
   });
   if (signalData.type === 'decline') {
     console.log("socket.id of the caller", data.targetId, "signal data type is ", signalData.type)

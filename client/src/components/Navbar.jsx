@@ -3,6 +3,7 @@ import { MdHomeFilled } from 'react-icons/md'
 import { RiMessengerLine } from 'react-icons/ri'
 import { IoCompassOutline } from 'react-icons/io5'
 import instagramText from '../assets/img/instagram-text.png'
+import instaJob from '../assets/img/mylogo.png'
 import { AiOutlineHeart } from 'react-icons/ai'
 import { useState, useEffect } from 'react'
 import { useLocation, Link, NavLink, useNavigate } from 'react-router-dom'
@@ -23,6 +24,7 @@ function App() {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh]= useState(false);
   const [selectedPost, setSelectedPost] = useState(null); // For handling the selected post
   const [postUser, setPostUser] = useState(null); 
   const logout = () => {
@@ -72,7 +74,7 @@ function App() {
       fetchNotifications();
     }
   }
-  }, [user.id]);
+  }, [user, user.token ,refresh]);
   const handleNotificationClick = async (jobOfferId) => {
     try {
       setLoading(true);
@@ -85,6 +87,10 @@ function App() {
       setLoading(false);
     }
   }
+  const handleHomeClick = () => {
+    setRefresh(prev => !prev); // Toggle refresh state
+    navigate('/'); // Navigate to the home page
+  };
 
 
   const blockRenderPaths = [
@@ -98,16 +104,16 @@ function App() {
     <nav className='w-full h-[60px] border-b border-[#DBDBDB] flex items-center justify-center fixed bg-white z-10' >
       <div className='flex items-center justify-between w-[975px] px-5  ' >
         <Link className='mt-2' to="/" >
-          <img src={instagramText} width="103" />
+          <img src={instaJob} width="103" />
         </Link>
         <div className='w-[268px] h-9 rounded-[8px] bg-[#EFEFEF] relative md:flex items-center justify-center px-4 ml-[162px] hidden  ' >
           <BsSearch color='#9A9A9A' />
           <input onKeyUp={e => e.key === 'Enter' ? goUser(e.target.value) : false} type="text" className='bg-transparent outline-none grow h-full ml-3 ' placeholder='Ara' />
         </div>
         <div className='flex items-center justify-center gap-5' >
-          <Link to="/" >
-            <MdHomeFilled size={28} />
-          </Link>
+        <div className="cursor-pointer" onClick={handleHomeClick}>
+          <MdHomeFilled size={28} />
+        </div>
           <RiMessengerLine size={28} />
           {user.role === 'hr' && (
             <BsPlusSquare onClick={() => dispatch(toggleCreatePost())} className='cursor-pointer' size={28} />
@@ -121,7 +127,9 @@ function App() {
     <BsBell
       size={28}
       className='cursor-pointer'
-      onClick={() => setShowNotifications(prev => !prev)}
+      onClick={() => setShowNotifications(prev => !prev)
+        
+      }
     />
     {showNotifications && (
   <div className='absolute right-0 top-8 bg-white border border-gray-200 shadow-lg rounded w-[250px] py-2 max-h-80 overflow-y-auto'>
@@ -157,16 +165,16 @@ function App() {
                 <span className='text-sm' >Profil</span>
               </Link>
               <div className='w-full flex items-center justify-start px-4 transition-all hover:bg-gray-100 h-12 cursor-pointer ' >
-                <span className='text-sm' >Kaydedildi</span>
+                <span className='text-sm' >Saved</span>
               </div>
               <div className='w-full flex items-center justify-start px-4 transition-all hover:bg-gray-100 h-12 cursor-pointer ' >
-                <span className='text-sm' >Ayarlar</span>
+                <span className='text-sm' >Settings</span>
               </div>
               <div className='w-full flex items-center justify-start px-4 transition-all hover:bg-gray-100 h-12 cursor-pointer ' >
-                <span className='text-sm' >Hesap Değiştir</span>
+                <span className='text-sm' >Switch Account</span>
               </div>
               <div onClick={logout} className='w-full flex items-center justify-start px-4 transition-all hover:bg-gray-100 h-12 cursor-pointer ' >
-                <span className='text-sm' >Çıkış Yap</span>
+                <span className='text-sm' >Sign Out</span>
               </div>
             </div>
           </button>

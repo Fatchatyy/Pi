@@ -13,8 +13,8 @@ import JobSeekerProfile from '../../models/jobSeekerProfile.js';
 
 dotenv.config();
 const mg = mailgun({
-    apiKey: '', // Replace with your Mailgun API key
-    domain: '' // Replace with your Mailgun domain
+    apiKey: process.env.MAILGUN_APIKEY, 
+    domain:  process.env.MAILGUN_DOMAIN
 });
 let userSocketMap = {}; // In-memory store for user-socket mappings
 /* USER ENDPOINTS */

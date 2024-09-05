@@ -73,7 +73,7 @@ router.get("/get-posts", getPosts)
 router.get('/job-seeker-profile/:userId',getJobSeekerProfile);
 router.get('/bookmarked-posts/:userID', getBookmarkedPosts);
 router.get('/get-notification/:userId',getNotificationsForUser);
-router.get('/applicants',getApplicants);
+router.get('/applicants',auth,getApplicants);
 router.get('/getSocketId/:userID',getUserSocketId)
 router.get('/auth', generateAuthUrl);
 router.get('/auth/callback', handleAuthCallback);
